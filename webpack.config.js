@@ -40,11 +40,16 @@ module.exports = {
 			},
 			{
 				test: /\.(png|svg|jpg|gif)$/,
-				use: ["file-loader"],
+				use: "file-loader",
 			},
 			{
 				test: /\.vue$/,
 				loader: "vue-loader",
+			},
+			{
+				test: /\.m?js$/,
+				exclude: /(node_modules|bower_components)/,
+				loader: "babel-loader",
 			},
 		],
 	},
