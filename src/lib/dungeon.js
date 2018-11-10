@@ -1,4 +1,6 @@
 import _uniq from "lodash/uniq"
+import { blocks } from "./blocks"
+import { make_xy2i, make_i2xy } from "./tools"
 
 export function createDungeon({
 	nbRoomW,
@@ -9,7 +11,7 @@ export function createDungeon({
 }) {
 	let width = nbRoomW * (roomWidth - 1) + 1
 	let height = nbRoomH * (roomHeight - 1) + 1
-	let grid = Array(width * height).fill("empty")
+	let grid = Array(width * height).fill(blocks.empty)
 	let xy2iGrid = make_xy2i(width),
 		i2xyGrid = make_i2xy(width),
 		xy2iRooms = make_xy2i(nbRoomW),
@@ -17,6 +19,9 @@ export function createDungeon({
 	// actual room width/height with starter wall
 	let rw = roomWidth - 1,
 		rh = roomHeight - 1
+
+	grid.width = width
+	grid.height = height
 
 	let rooms = Array(nbRoomW * nbRoomH)
 		.fill(0)
@@ -52,37 +57,32 @@ export function createDungeon({
 		let { x, y } = i2xyRooms(i)
 		let room = rooms[i]
 		for (let h = 0; h < roomHeight; h++) {
-			grid[xy2iGrid((x + 1) * rw, y * rh + h)] = "wall"
+			grid[xy2iGrid((x + 1) * rw, y * rh + h)] = blocks.wall
 		}
 		for (let w = 0; w < roomWidth; w++) {
-			grid[xy2iGrid(x * rw + w, (y + 1) * rh)] = "wall"
+			grid[xy2iGrid(x * rw + w, (y + 1) * rh)] = blocks.wall
 		}
 		room.right &&
-			(grid[xy2iGrid((x + 1) * rw, y * rh + Math.floor(rh / 2))] = "empty")
+			(grid[xy2iGrid((x + 1) * rw, y * rh + Math.floor(rh / 2))] = blocks.empty)
 		room.right &&
-			(grid[xy2iGrid((x + 1) * rw, y * rh + Math.ceil(rh / 2))] = "empty")
+			(grid[xy2iGrid((x + 1) * rw, y * rh + Math.ceil(rh / 2))] = blocks.empty)
 		room.down &&
-			(grid[xy2iGrid(x * rw + Math.floor(rw / 2), (y + 1) * rh)] = "empty")
+			(grid[xy2iGrid(x * rw + Math.floor(rw / 2), (y + 1) * rh)] = blocks.empty)
 		room.down &&
-			(grid[xy2iGrid(x * rw + Math.ceil(rw / 2), (y + 1) * rh)] = "empty")
+			(grid[xy2iGrid(x * rw + Math.ceil(rw / 2), (y + 1) * rh)] = blocks.empty)
 	}
 
 	for (let x = 0; x < width; x++)
-		grid[x] = grid[xy2iGrid(x, height - 1)] = "wall"
+		grid[x] = grid[xy2iGrid(x, height - 1)] = blocks.wall
 	for (let y = 0; y < height; y++)
-		grid[y * width] = grid[xy2iGrid(width - 1, y)] = "wall"
+		grid[y * width] = grid[xy2iGrid(width - 1, y)] = blocks.wall
+
+	for (let i = 0; i < width * height; i++) {
+		if (grid[i] !== blocks.wall) continue
+		let { x, y } = i2xyGrid(i)
+		let below = grid[xy2iGrid(x, y + 1)]
+		if (!below || below === blocks.empty) grid[i] = blocks.wallTop
+	}
+
 	return grid
-}
-
-function make_xy2i(width) {
-	return function(x, y) {
-		if (x < 0 || y < 0) return -1
-		return x + y * width
-	}
-}
-
-function make_i2xy(width) {
-	return function(i) {
-		return { x: i % width, y: Math.floor(i / width) }
-	}
 }
