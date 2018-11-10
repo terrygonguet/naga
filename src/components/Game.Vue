@@ -1,46 +1,40 @@
 <template>
 	<div class="screen">
 		<div 
-			v-for="cell of game.grid" :key="`${cell.x}_${cell.y}`" 
+			v-for="(cell,i) of game.grid" :key="i" 
 			class="cell" 
 			:class="cellClass(cell)"></div>
 	</div>
 </template>
 
 <script>
-import Game, { directions, setDirections } from "../lib/game.js"
-
-setDirections({
-	up: "ArrowUp",
-	down: "ArrowDown",
-	left: "ArrowLeft",
-	right: "ArrowRight",
-})
+import Game from "../lib/game.js"
 
 export default {
 	data() {
 		return {
 			game: new Game(),
-			tps: 4.4,
-			lastKey: null,
+			tps: 7,
 		}
 	},
 	methods: {
 		tick() {
-			!this.game.lost && this.game.tick(this.lastKey)
-		},
-		handleKeydown(e) {
-			this.lastKey = e.key
+			this.game.tick()
 		},
 		cellClass(cell) {
-			if (cell.isFruit) return "bg-red"
-			else if (cell.isSnake) return "bg-green-light"
-			else if (cell.isWall) return "bg-white"
-			else return "bg-black"
+			switch (cell) {
+				case "wall":
+					return "bg-white"
+				case "snake":
+					return "bg-green-light"
+				case "fruit":
+					return "bg-red"
+				default:
+					return "bg-black"
+			}
 		},
 	},
 	mounted() {
-		document.addEventListener("keydown", this.handleKeydown)
 		setInterval(this.tick, 1000 / this.tps)
 	},
 }
@@ -49,8 +43,8 @@ export default {
 <style>
 .screen {
 	display: grid;
-	grid-template-columns: repeat(50, auto);
-	grid-template-rows: repeat(50, auto);
+	grid-template-columns: repeat(46, auto);
+	grid-template-rows: repeat(46, auto);
 }
 
 .cell {

@@ -1,10 +1,12 @@
 import seedrandom from "seedrandom"
+import { entity, component, findByComponent, findById } from "geotic"
+import { createDungeon } from "./dungeon"
 
 export let directions = {
-	up: "up",
-	left: "left",
-	down: "down",
-	right: "right",
+	up: "ArrowUp",
+	left: "ArrowLeft",
+	down: "ArrowDown",
+	right: "ArrowRight",
 }
 
 export function setDirections({ up, down, left, right }) {
@@ -26,48 +28,121 @@ export function oppositeDirection(direction) {
 	}
 }
 
+export function turnRight(direction) {
+	switch (direction) {
+		case directions.up:
+			return directions.right
+		case directions.down:
+			return directions.left
+		case directions.left:
+			return directions.up
+		case directions.right:
+			return directions.down
+		default:
+			return null
+	}
+}
+
+export function turnLeft(direction) {
+	switch (direction) {
+		case directions.up:
+			return directions.left
+		case directions.down:
+			return directions.right
+		case directions.left:
+			return directions.down
+		case directions.right:
+			return directions.up
+		default:
+			return null
+	}
+}
+
 export default class Game {
-	grid = []
-	width = 50
-	height = 50
-	lost = false
+	width = 46
+	height = 46
+	roomWidth = 10
+	roomHeight = 10
 	lastDirection = null
 
 	seed = "suce ma bite2"
 	rng = seedrandom(this.seed)
 
-	snakePos = {
-		x: Math.floor(this.width / 2),
-		y: Math.floor(this.height / 2),
-	}
-	snake = [this.snakePos]
-	snakeLength = 2
+	snake = entity()
+	fruit = null
+	grid = createDungeon({ ...this, nbRoomW: 5, nbRoomH: 5 })
 
 	constructor() {
-		// init grid
-		for (let i = 0; i < this.height * this.width; i++) {
-			let x = i % this.width,
-				y = Math.floor(i / this.width)
-			this.grid.push({
-				isWall: isWall({ game: this, x, y }),
-				isFruit: false,
-				isSnake: false,
-				x,
-				y,
+		this.grid.forEach(
+			(c, i) =>
+				c === "wall" &&
+				entity().add("position", {
+					x: i % this.width,
+					y: Math.floor(i / this.width),
+					type: "wall",
+				})
+		)
+
+		this.snake
+			.add("tail", {
+				x: 4,
+				y: 4,
+				length: 4,
 			})
-		}
-
-		// init snake
-		this.cell(this.snakePos).isSnake = true
-
-		this.makeFruit()
+			.add("controller")
 		console.log(this)
 	}
 
-	tick(direction) {
-		let nextPos = { ...this.snakePos }
-		if (direction === oppositeDirection(this.lastDirection))
-			direction = this.lastDirection
+	tick() {
+		systems.forEach(s => s(this))
+	}
+
+	die() {
+		this.snake.destroy()
+	}
+
+	cell({ x, y, type }) {
+		if (type) this.grid[x + y * this.width] = type
+		else return this.grid[x + y * this.width]
+	}
+}
+
+// components - systems
+let systems = []
+
+function tail(e, { length, x, y }) {
+	return {
+		length,
+		head: null,
+		entities: [],
+		lastDirection: null,
+		mount() {
+			let head = entity()
+			head.add("position", { x, y, type: "snake" })
+			e.tail.head = head.id
+			e.tail.entities.push(head.id)
+		},
+		unmount() {
+			e.tail.entities.forEach(ent => findById(ent).destroy())
+		},
+	}
+}
+component("tail", tail)
+systems.push(function(game) {
+	let { tail, controller } = game.snake
+
+	let canMove = false,
+		tries = 2,
+		nextPos,
+		direction
+	do {
+		nextPos = { ...findById(tail.head).position }
+		direction = controller.direction
+		if (direction === oppositeDirection(tail.lastDirection))
+			direction = tail.lastDirection
+
+		if (tries === 1) direction = turnRight(direction)
+		else if (tries === 0) direction = turnLeft(direction)
 
 		switch (direction) {
 			case directions.up:
@@ -82,45 +157,56 @@ export default class Game {
 			case directions.right:
 				nextPos.x++
 				break
-			default:
-				if (!this.lastDirection) return
-				else direction = this.lastDirection
-		}
-		this.lastDirection = direction
-
-		this.snakePos = nextPos
-		let snakeCell = this.cell(this.snakePos)
-		if (snakeCell.isWall || snakeCell.isSnake) return this.die()
-		this.snake.push(this.snakePos)
-		snakeCell.isSnake = true
-
-		if (snakeCell.isFruit) {
-			this.snakeLength++
-			snakeCell.isFruit = false
-			this.makeFruit()
 		}
 
-		if (this.snake.length > this.snakeLength)
-			this.cell(this.snake.shift()).isSnake = false
-	}
+		let nextCell = findByComponent("position").find(
+			ent => nextPos.x === ent.position.x && nextPos.y === ent.position.y
+		)
+		if (nextCell) {
+			let {
+				position: { type },
+			} = nextCell
+			if (type === "wall") {
+				tries--
+			} else canMove = true
+		} else canMove = true
 
-	makeFruit() {
-		let fruitPos = {
-			x: Math.floor(1 + this.rng() * (this.width - 2)),
-			y: Math.floor(1 + this.rng() * (this.height - 2)),
-		}
-		this.cell(fruitPos).isFruit = true
-	}
+		if (tries < 0) return game.die()
+	} while (!canMove)
 
-	die() {
-		this.lost = true
-	}
+	tail.lastDirection = direction
+	controller.direction = direction
 
-	cell({ x, y }) {
-		return this.grid[x + y * this.width]
+	let head = entity().add("position", nextPos)
+	tail.head = head.id
+	tail.entities.push(head.id)
+	if (tail.entities.length > tail.length)
+		findById(tail.entities.shift()).destroy()
+})
+
+function controller(e) {
+	let listener = evt =>
+		Object.values(directions).includes(evt.key) &&
+		(e.controller.direction = evt.key)
+	return {
+		direction: null,
+		mount() {
+			document.addEventListener("keydown", listener)
+		},
+		unmount() {
+			document.removeEventListener("keydown", listener)
+		},
 	}
 }
+component("controller", controller)
 
-function isWall({ game, x, y }) {
-	return x * y === 0 || x === game.width - 1 || y === game.height - 1
+function position(e, { x, y, type }) {
+	return { x, y, type }
 }
+component("position", position)
+systems.push(function(game) {
+	game.grid = game.grid.map(() => "empty")
+	findByComponent("position").forEach(ent => {
+		game.cell(ent.position)
+	})
+})
