@@ -1,4 +1,3 @@
-import { blocks, walls, doorAndWalls } from "../blocks"
 import { findByComponent } from "geotic"
 import { make_xy2i, make_isInBounds, make_cmpPos } from "../tools"
 import _order from "./order.json"
@@ -50,10 +49,9 @@ export function update(game) {
 			else if (isInBounds(x, y)) {
 				// else we uncover it
 				fogOfWar[xy2i(x, y)] = false
-				// get stopped by walls and doors
-				// TODO : make it better ?
-				let cell = entities.find(e => cmpPos(e.position))?.sprite.type
-				if (!doorAndWalls.includes(cell)) queue.push(...threeByThree({ x, y }))
+				// get stopped i.e. by walls and doors
+				let cell = entities.find(e => cmpPos(e.position))
+				if (!cell?.hitbox?.blocksSight) queue.push(...threeByThree({ x, y }))
 			}
 		}
 	})

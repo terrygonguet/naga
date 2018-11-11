@@ -24,6 +24,7 @@ export default {
 			spriteHeight: 16,
 			spriteSheet,
 			sprites: {
+				// "block-name": [x, y, <rotation>]
 				"wall-top": [2, 1],
 				wall: [1, 2],
 				"wall-top-right": [3, 1],
@@ -50,6 +51,7 @@ export default {
 		document.head.append(css)
 		let sheet = css.sheet
 
+		// grids and cells common props
 		sheet.insertRule(`.screen {
 			display: grid;
 			grid-template-rows: repeat(${this.game.height}, ${this.spriteHeight}px);
@@ -61,6 +63,7 @@ export default {
 			background-image: url("${this.spriteSheet}");
 			background-repeat: no-repeat;
 		}`)
+		// flip modifiers
 		sheet.insertRule(`.flipV {
 			filter: flipV;
 			transform: scaleX(-1);
@@ -69,6 +72,7 @@ export default {
 			filter: flipH;
 			transform: scaleY(-1);
 		}`)
+		// create a rule for each sprite
 		for (const sprite in this.sprites) {
 			if (this.sprites.hasOwnProperty(sprite)) {
 				const position = this.sprites[sprite]

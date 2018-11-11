@@ -1,6 +1,7 @@
 {
 	"controller": 0,
 	"position": 0,
+	"hitbox": 0,
 	"snake": 10,
 	"animation": 50,
 	"sprite": 51,

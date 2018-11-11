@@ -1,7 +1,7 @@
 import seedrandom from "seedrandom"
 import { entity, component, findByComponent, findById } from "geotic"
 import { createDungeon } from "./dungeon"
-import { blocks, animations } from "./blocks"
+import { blocks, animations, walls, doorAndWalls } from "./blocks"
 
 export default class Game {
 	seed = Math.random().toString(16)
@@ -40,6 +40,10 @@ export default class Game {
 						type: c,
 						isBackground: true,
 					})
+					.add("hitbox", {
+						blocksSight: doorAndWalls.includes(c),
+						blocksMoving: walls.includes(c),
+					})
 		)
 
 		this.snake
@@ -59,10 +63,12 @@ export default class Game {
 			.add("position", { x: 13, y: 3 })
 			.add("sprite", { type: blocks.enemy.red })
 			.add("animation", { frames: animations.enemyRed, flipV: true })
+			.add("hitbox", { canBeKilled: true })
 		entity()
 			.add("position", { x: 14, y: 5 })
 			.add("sprite", { type: blocks.enemy.green })
 			.add("animation", { frames: animations.enemyGreen, flipV: true })
+			.add("hitbox", { canBeKilled: true })
 
 		// first update
 		this.tick()

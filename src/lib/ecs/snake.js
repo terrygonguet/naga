@@ -5,7 +5,7 @@ import {
 	turnRight,
 	oppositeDirection,
 } from "../directions"
-import { blocks, walls } from "../blocks"
+import { blocks } from "../blocks"
 import _findKey from "lodash/findKey"
 import { make_cmpPos } from "../tools"
 import _order from "./order.json"
@@ -89,11 +89,14 @@ export function update(game) {
 
 		let cmpPos = make_cmpPos(nextPos)
 		let nextCell = findByComponent("position").find(ent => cmpPos(ent.position))
-		if (nextCell) {
-			if (walls.includes(nextCell?.sprite.type)) {
-				tries--
-			} else canMove = true
+		if (nextCell?.hitbox?.blocksMoving) {
+			tries--
 		} else canMove = true
+
+		if (nextCell?.hitbox?.canBeKilled) {
+			nextCell?.destroy()
+			snake.length++
+		}
 
 		if (tries < 0) return game.die()
 	} while (!canMove)
