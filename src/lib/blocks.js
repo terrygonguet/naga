@@ -1,8 +1,16 @@
 export const blocks = {
 	wall: "wall",
-	wallTop: "wall-top",
+	walls: {
+		top: "wall-top",
+		topLeft: "wall-top-left",
+		topRight: "wall-top-right",
+		btmLeft: "wall-bottom-left",
+		btmRight: "wall-bottom-right",
+	},
 
 	empty: "empty",
+	hidden: "shadow",
+	door: "door",
 
 	snake: "snake",
 	snakeHead: {
@@ -13,7 +21,14 @@ export const blocks = {
 	},
 }
 
-export const walls = [blocks.wall, blocks.wallTop]
+export const walls = [
+	blocks.wall,
+	blocks.walls.top,
+	blocks.walls.topLeft,
+	blocks.walls.topRight,
+	blocks.walls.btmLeft,
+	blocks.walls.btmRight,
+]
 
 export const snake = [
 	blocks.snake,

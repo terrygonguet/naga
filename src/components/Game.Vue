@@ -49,6 +49,18 @@ export default {
 .wall {
 	background-position: 0px -16px;
 }
+.wall-top-left {
+	background-position: 0px 0px;
+}
+.wall-top-right {
+	background-position: -32px 0px;
+}
+.wall-bottom-left {
+	background-position: 0px -32px;
+}
+.wall-bottom-right {
+	background-position: -32px -32px;
+}
 
 .snake {
 	background-position: -16px -48px;
@@ -69,11 +81,13 @@ export default {
 	transform: rotate(90deg);
 }
 
-.fruit {
-	background-position: -96px -64px;
-}
-
 .empty {
 	background-position: -16px -16px;
+}
+.shadow {
+	background-position: 0px -48px;
+}
+.door {
+	background-position: -64px -48px;
 }
 </style>

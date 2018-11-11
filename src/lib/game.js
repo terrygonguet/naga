@@ -4,10 +4,12 @@ import { createDungeon } from "./dungeon"
 import { tail, update as updateTail } from "./ecs/tail"
 import { position, update as updatePosition } from "./ecs/position"
 import { controller, update as updateController } from "./ecs/controller"
+import { fov, update as updateFov } from "./ecs/fov"
 
 component("tail", tail)
 component("position", position)
 component("controller", controller)
+component("fov", fov)
 
 export default class Game {
 	seed = "suce ma bite2"
@@ -15,17 +17,18 @@ export default class Game {
 
 	snake = entity()
 	grid = createDungeon({
-		roomWidth: 10,
-		roomHeight: 10,
-		nbRoomW: 5,
-		nbRoomH: 5,
+		roomWidth: 9,
+		roomHeight: 9,
+		nbRoomW: 6,
+		nbRoomH: 6,
 		rng: this.rng,
 	})
 
+	// TODO : fix ugly
 	width = this.grid.width
 	height = this.grid.height
 
-	systems = [updateController, updateTail, updatePosition]
+	systems = [updateController, updateTail, updatePosition, updateFov]
 
 	constructor() {
 		this.grid.forEach(

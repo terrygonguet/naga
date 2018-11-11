@@ -16,7 +16,7 @@ export function tail(e, { length, x, y }) {
 		lastDirection: null,
 		mount() {
 			let head = entity()
-			head.add("position", { x, y, type: blocks.snakeHeadRight })
+			head.add("position", { x, y, type: blocks.snakeHeadRight }).add("fov")
 			e.tail.head = head.id
 			e.tail.entities.push(head.id)
 		},
@@ -33,6 +33,7 @@ export function update(game) {
 		tries = 2,
 		nextPos,
 		direction
+	// TODO : fix "turn around" bug
 	do {
 		nextPos = { ...findById(tail.head).position }
 		direction = controller.direction
@@ -78,7 +79,9 @@ export function update(game) {
 	nextPos.type =
 		blocks.snakeHead[_findKey(directions, d => d === direction) || "right"]
 
-	let head = entity().add("position", nextPos)
+	let head = entity()
+		.add("position", nextPos)
+		.add("fov")
 	tail.head = head.id
 	tail.entities.push(head.id)
 	if (tail.entities.length > tail.length)
