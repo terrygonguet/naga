@@ -19,7 +19,7 @@ export function animation(e, { frames, flipV = false, flipH = false }) {
 		frames,
 		flipH,
 		flipV,
-		frameIndex: 1,
+		time: 1,
 		current: 0,
 	}
 }
@@ -27,10 +27,14 @@ export function animation(e, { frames, flipV = false, flipH = false }) {
 export function update(game) {
 	findByComponent("animation").forEach(ent => {
 		if (!ent.sprite) return
+
 		let animation = ent.animation
-		let { frameIndex, current, frames, flipH, flipV } = animation
-		if (++animation.frameIndex > frames[current][1]) {
-			animation.frameIndex = 1
+		let { time, current, frames, flipH, flipV } = animation
+
+		// if we reached the max duration of the current frame
+		if (++animation.time > frames[current][1]) {
+			// reset and go to next frame, wrap if necessary
+			animation.time = 1
 			animation.current = ++current % frames.length
 			ent.sprite.type =
 				frames[animation.current][0] +

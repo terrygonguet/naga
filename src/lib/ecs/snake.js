@@ -10,6 +10,14 @@ import _findKey from "lodash/findKey"
 import { make_cmpPos } from "../tools"
 import _order from "./order.json"
 
+/**
+ * Creates an entity for the snake head oriented towards direction
+ * @param params
+ * @param {Number} params.x
+ * @param {Number} params.y
+ * @param {Direction} params.direction
+ * @returns {Entity}
+ */
 function make_head({ x, y, direction }) {
 	return entity()
 		.add("position", { x, y })
@@ -21,7 +29,15 @@ function make_head({ x, y, direction }) {
 		})
 }
 
-export function snake(e, { length, x, y }) {
+/**
+ * A snake
+ * @param {Entity} e The entity to attach the component to
+ * @param {Object} params
+ * @param {Number} [params.length]
+ * @param {Number} [params.x]
+ * @param {Number} [params.y]
+ */
+export function snake(e, { length = 4, x = 4, y = 4 }) {
 	return {
 		length,
 		head: null,

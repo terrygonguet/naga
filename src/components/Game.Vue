@@ -24,24 +24,24 @@ export default {
 			spriteHeight: 16,
 			spriteSheet,
 			sprites: {
-				"wall-top": [1, 0],
-				wall: [0, 1],
-				"wall-top-right": [2, 0],
-				"wall-top-left": [0, 0],
-				"wall-bottom-right": [2, 2],
-				"wall-bottom-left": [0, 2],
-				snake: [1, 3],
-				"snake-head-right": [2, 3],
-				"snake-head-left": [2, 3, 180],
-				"snake-head-up": [2, 3, -90],
-				"snake-head-down": [2, 3, 90],
-				empty: [1, 1],
-				shadow: [0, 3],
-				door: [4, 3],
-				"enemy-red-1": [0, 4],
-				"enemy-red-2": [1, 4],
-				"enemy-green-1": [2, 4],
-				"enemy-green-2": [3, 4],
+				"wall-top": [2, 1],
+				wall: [1, 2],
+				"wall-top-right": [3, 1],
+				"wall-top-left": [1, 1],
+				"wall-bottom-right": [3, 3],
+				"wall-bottom-left": [1, 3],
+				snake: [2, 4],
+				"snake-head-right": [3, 4],
+				"snake-head-left": [3, 4, 180],
+				"snake-head-up": [3, 4, -90],
+				"snake-head-down": [3, 4, 90],
+				empty: [2, 2],
+				shadow: [1, 4],
+				door: [5, 4],
+				"enemy-red-1": [1, 5],
+				"enemy-red-2": [2, 5],
+				"enemy-green-1": [3, 5],
+				"enemy-green-2": [4, 5],
 			},
 		}
 	},
@@ -73,13 +73,14 @@ export default {
 			if (this.sprites.hasOwnProperty(sprite)) {
 				const position = this.sprites[sprite]
 				sheet.insertRule(`.${sprite} {
-					background-position: -${position[0] * this.spriteWidth}px -${position[1] *
-					this.spriteHeight}px;
+					background-position: -${(position[0] - 1) *
+						this.spriteWidth}px -${(position[1] - 1) * this.spriteHeight}px;
 					${position[2] ? "transform: rotate(" + position[2] + "deg);" : ""}
 				}`)
 			}
 		}
 
+		// TODO : use RAF
 		setInterval(() => this.game.tick(), 1000 / this.tps)
 	},
 }

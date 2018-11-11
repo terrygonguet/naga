@@ -2,6 +2,16 @@ import _uniq from "lodash/uniq"
 import { blocks } from "./blocks"
 import { make_xy2i, make_i2xy } from "./tools"
 
+/**
+ * Creates a dungeon and returns it as a linear Array
+ * @param {Object} params
+ * @param {Number} params.nbRoomH
+ * @param {Number} params.nbRoomW
+ * @param {Number} params.roomWidth
+ * @param {Number} params.roomHeight
+ * @param {Function} params.rng
+ * @returns {String[]}
+ */
 export function createDungeon({
 	nbRoomW,
 	nbRoomH,

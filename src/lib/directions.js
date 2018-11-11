@@ -1,3 +1,6 @@
+/**
+ * The key codes associated with the 4 directions
+ */
 export let directions = {
 	up: "ArrowUp",
 	left: "ArrowLeft",
@@ -5,10 +8,23 @@ export let directions = {
 	right: "ArrowRight",
 }
 
+/**
+ * Changes the mapped direction key codes
+ * @param {Object} params
+ * @param {String} params.up
+ * @param {String} params.down
+ * @param {String} params.left
+ * @param {String} params.right
+ */
 export function setDirections({ up, down, left, right }) {
 	directions = { up, down, left, right }
 }
 
+/**
+ * Returns the opposite of the given direction
+ * @param {String} direction
+ * @returns {String}
+ */
 export function oppositeDirection(direction) {
 	switch (direction) {
 		case directions.up:
@@ -24,6 +40,11 @@ export function oppositeDirection(direction) {
 	}
 }
 
+/**
+ * Returns the direction rotated right
+ * @param {String} direction
+ * @returns {String}
+ */
 export function turnRight(direction) {
 	switch (direction) {
 		case directions.up:
@@ -39,6 +60,11 @@ export function turnRight(direction) {
 	}
 }
 
+/**
+ * Returns the direction rotated left
+ * @param {String} direction
+ * @returns {String}
+ */
 export function turnLeft(direction) {
 	switch (direction) {
 		case directions.up:
