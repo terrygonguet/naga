@@ -1,6 +1,7 @@
 import seedrandom from "seedrandom"
 import { entity, component, findByComponent, findById } from "geotic"
 import { createDungeon } from "./dungeon"
+import { make_i2xy, make_cmpPos } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
 
 export default class Game {
@@ -59,21 +60,36 @@ export default class Game {
 			height: this.height,
 		})
 
-		entity()
-			.add("position", { x: 13, y: 3 })
-			.add("sprite", { type: blocks.enemy.red })
-			.add("animation", { frames: animations.enemyRed, flipV: true })
-			.add("hitbox", { canBeKilled: true })
-		entity()
-			.add("position", { x: 14, y: 5 })
-			.add("sprite", { type: blocks.enemy.green })
-			.add("animation", { frames: animations.enemyGreen, flipV: true })
-			.add("hitbox", { canBeKilled: true })
+		// make some enemies on empty spaces
+		let max = 20 + Math.round(this.rng() * 10)
+		let i2xy = make_i2xy(this.width)
+		for (let i = 0; i < max; i++) {
+			let pos = i2xy(Math.floor(this.rng() * this.foreground.length))
+			let cmpPos = make_cmpPos(pos)
+			let cell = findByComponent("position").find(ent => cmpPos(ent.position))
+			if (cell) {
+				i--
+				continue
+			}
+			this.make_enemy(pos)
+		}
 
 		// first update
 		this.tick()
 
 		console.log(this)
+	}
+
+	make_enemy({ x, y }) {
+		let isRed = this.rng() < 0.5
+		entity()
+			.add("position", { x, y })
+			.add("sprite", { type: blocks.enemy[isRed ? "red" : "green"] })
+			.add("animation", {
+				frames: animations[isRed ? "enemyRed" : "enemyGreen"],
+				flipV: true,
+			})
+			.add("hitbox", { canBeKilled: true })
 	}
 
 	initECS() {
