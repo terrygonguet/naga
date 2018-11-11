@@ -72,6 +72,10 @@ export default class Game {
 			width: this.width,
 			height: this.height,
 		})
+
+		// first update
+		this.tick()
+
 		console.log(this)
 	}
 
