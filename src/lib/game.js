@@ -1,22 +1,26 @@
 import seedrandom from "seedrandom"
 import { entity, component, findByComponent, findById } from "geotic"
 import { createDungeon } from "./dungeon"
-import { tail, update as updateTail } from "./ecs/tail"
+
+// TODO : auto import
+import { snake, update as updateSnake } from "./ecs/snake"
 import { position, update as updatePosition } from "./ecs/position"
 import { controller, update as updateController } from "./ecs/controller"
+import { sprite, update as updateSprite } from "./ecs/sprite"
 import { fov, update as updateFov } from "./ecs/fov"
-
-component("tail", tail)
+import { fogOfWar, update as updateFoW } from "./ecs/fog_of_war"
+component("snake", snake)
 component("position", position)
 component("controller", controller)
+component("sprite", sprite)
 component("fov", fov)
+component("fogOfWar", fogOfWar)
 
 export default class Game {
 	seed = "suce ma bite2"
 	rng = seedrandom(this.seed)
 
-	snake = entity()
-	grid = createDungeon({
+	background = createDungeon({
 		roomWidth: 9,
 		roomHeight: 9,
 		nbRoomW: 6,
@@ -24,30 +28,50 @@ export default class Game {
 		rng: this.rng,
 	})
 
-	// TODO : fix ugly
-	width = this.grid.width
-	height = this.grid.height
+	// TODO : fix ugly (probably config file ?)
+	width = this.background.width
+	height = this.background.height
+	foreground = Array(this.width * this.height).fill(null)
 
-	systems = [updateController, updateTail, updatePosition, updateFov]
+	snake = entity()
+	fogOfWar = entity()
+
+	systems = [
+		updateController,
+		updateSnake,
+		updatePosition,
+		updateSprite,
+		updateFov,
+		updateFoW,
+	]
 
 	constructor() {
-		this.grid.forEach(
+		this.background.forEach(
 			(c, i) =>
 				c !== "empty" &&
-				entity().add("position", {
-					x: i % this.width,
-					y: Math.floor(i / this.width),
-					type: c,
-				})
+				entity()
+					.add("position", {
+						x: i % this.width,
+						y: Math.floor(i / this.width),
+					})
+					.add("sprite", {
+						type: c,
+						isBackground: true,
+					})
 		)
 
 		this.snake
-			.add("tail", {
+			.add("snake", {
 				x: 4,
 				y: 4,
 				length: 4,
 			})
 			.add("controller")
+
+		this.fogOfWar.add("fogOfWar", {
+			width: this.width,
+			height: this.height,
+		})
 		console.log(this)
 	}
 
@@ -57,10 +81,5 @@ export default class Game {
 
 	die() {
 		this.snake.destroy()
-	}
-
-	cell({ x, y, type }) {
-		if (type) this.grid[x + y * this.width] = type
-		else return this.grid[x + y * this.width]
 	}
 }

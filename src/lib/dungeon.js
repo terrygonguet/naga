@@ -58,7 +58,7 @@ export function createDungeon({
 	} while (_uniq(indexes).length !== 1)
 
 	// throw in some more doors
-	for (let i = 0; i < Math.max(nbRoomW, nbRoomH); i++) {
+	for (let i = 0; i < 2 * Math.max(nbRoomW, nbRoomH); i++) {
 		let x1 = Math.floor(rng() * nbRoomW),
 			y1 = Math.floor(rng() * nbRoomH)
 		let room1 = rooms[xy2iRooms(x1, y1)]
@@ -84,6 +84,7 @@ export function createDungeon({
 	for (let i = 0; i < nbRoomW * nbRoomH; i++) {
 		let { x, y } = i2xyRooms(i)
 		let room = rooms[i]
+
 		// right wall
 		for (let h = 0; h < roomHeight; h++) {
 			grid[xy2iGrid((x + 1) * rw, y * rh + h)] = blocks.wall
@@ -92,19 +93,31 @@ export function createDungeon({
 		for (let w = 0; w < roomWidth; w++) {
 			grid[xy2iGrid(x * rw + w, (y + 1) * rh)] = blocks.wall
 		}
+
 		// doors
-		room.right &&
-			(grid[xy2iGrid((x + 1) * rw, y * rh + Math.floor(rh / 2))] =
-				rng() < 0.5 ? blocks.door : blocks.empty)
-		room.right &&
-			(grid[xy2iGrid((x + 1) * rw, y * rh + Math.ceil(rh / 2))] =
-				rng() < 0.5 ? blocks.door : blocks.empty)
-		room.down &&
-			(grid[xy2iGrid(x * rw + Math.floor(rw / 2), (y + 1) * rh)] =
-				rng() < 0.5 ? blocks.door : blocks.empty)
-		room.down &&
-			(grid[xy2iGrid(x * rw + Math.ceil(rw / 2), (y + 1) * rh)] =
-				rng() < 0.5 ? blocks.door : blocks.empty)
+		// 50% chance that we put a door un the wall
+		// else we remove the wall (except the extremities)
+		let hasDoor = rng() < 0.5
+		if (room.right) {
+			if (hasDoor) {
+				grid[xy2iGrid((x + 1) * rw, y * rh + Math.floor(rh / 2))] = blocks.door
+				grid[xy2iGrid((x + 1) * rw, y * rh + Math.ceil(rh / 2))] = blocks.door
+			} else {
+				for (let h = 1; h < roomHeight - 1; h++) {
+					grid[xy2iGrid((x + 1) * rw, y * rh + h)] = blocks.empty
+				}
+			}
+		}
+		if (room.down) {
+			if (hasDoor) {
+				grid[xy2iGrid(x * rw + Math.floor(rw / 2), (y + 1) * rh)] = blocks.door
+				grid[xy2iGrid(x * rw + Math.ceil(rw / 2), (y + 1) * rh)] = blocks.door
+			} else {
+				for (let w = 1; w < roomWidth - 1; w++) {
+					grid[xy2iGrid(x * rw + w, (y + 1) * rh)] = blocks.empty
+				}
+			}
+		}
 	}
 
 	// outer walls
@@ -112,6 +125,8 @@ export function createDungeon({
 		grid[x] = grid[xy2iGrid(x, height - 1)] = blocks.wall
 	for (let y = 0; y < height; y++)
 		grid[y * width] = grid[xy2iGrid(width - 1, y)] = blocks.wall
+
+	// TODO : remove orphan blocks and other uglies
 
 	// Add shadow on walls that have empty space below them
 	for (let i = 0; i < width * height; i++) {

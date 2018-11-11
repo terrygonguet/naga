@@ -37,3 +37,5 @@ export const snake = [
 	blocks.snakeHead.right,
 	blocks.snakeHead.up,
 ]
+
+export const doorAndWalls = [...walls, blocks.door]
