@@ -1,8 +1,9 @@
 import { blocks } from "../blocks"
 import { findByComponent } from "geotic"
 import { make_xy2i } from "../tools"
+import _order from "./order.json"
 
-export function sprite(e, { type, isBackground }) {
+export function sprite(e, { type, isBackground = false }) {
 	return { type, isBackground, isForeground: !isBackground }
 }
 
@@ -21,3 +22,4 @@ export function update(game) {
 
 export { sprite as component }
 export const name = "sprite"
+export const order = _order[name]

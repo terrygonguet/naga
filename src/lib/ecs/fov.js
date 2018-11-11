@@ -1,6 +1,7 @@
 import { blocks, walls, doorAndWalls } from "../blocks"
 import { findByComponent } from "geotic"
 import { make_xy2i, make_isInBounds, make_cmpPos } from "../tools"
+import _order from "./order.json"
 
 export function fov(e) {
 	return "fov"
@@ -51,3 +52,4 @@ export function update(game) {
 
 export { fov as component }
 export const name = "fov"
+export const order = _order[name]

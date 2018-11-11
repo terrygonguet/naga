@@ -8,6 +8,7 @@ import {
 import { blocks, walls } from "../blocks"
 import _findKey from "lodash/findKey"
 import { make_cmpPos } from "../tools"
+import _order from "./order.json"
 
 function make_head({ x, y, direction }) {
 	return entity()
@@ -96,3 +97,4 @@ export function update(game) {
 
 export { snake as component }
 export const name = "snake"
+export const order = _order[name]

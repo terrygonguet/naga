@@ -38,6 +38,10 @@ export default {
 				empty: [1, 1],
 				shadow: [0, 3],
 				door: [4, 3],
+				"enemy-red-1": [0, 4],
+				"enemy-red-2": [1, 4],
+				"enemy-green-1": [2, 4],
+				"enemy-green-2": [3, 4],
 			},
 		}
 	},
@@ -56,6 +60,14 @@ export default {
 			height: ${this.spriteHeight}px;
 			background-image: url("${this.spriteSheet}");
 			background-repeat: no-repeat;
+		}`)
+		sheet.insertRule(`.flipV {
+			filter: flipV;
+			transform: scaleX(-1);
+		}`)
+		sheet.insertRule(`.flipH {
+			filter: flipH;
+			transform: scaleY(-1);
 		}`)
 		for (const sprite in this.sprites) {
 			if (this.sprites.hasOwnProperty(sprite)) {

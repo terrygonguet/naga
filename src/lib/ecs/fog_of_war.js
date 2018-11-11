@@ -1,6 +1,7 @@
 import { blocks, walls } from "../blocks"
 import { findByComponent } from "geotic"
 import { make_xy2i } from "../tools"
+import _order from "./order.json"
 
 export function fogOfWar(e, { width, height }) {
 	let grid = Array(width * height).fill(true)
@@ -27,3 +28,4 @@ export function update(game) {
 
 export { fogOfWar as component }
 export const name = "fogOfWar"
+export const order = _order[name]

@@ -1,23 +1,10 @@
 import seedrandom from "seedrandom"
 import { entity, component, findByComponent, findById } from "geotic"
 import { createDungeon } from "./dungeon"
-
-// TODO : auto import
-import { snake, update as updateSnake } from "./ecs/snake"
-import { position, update as updatePosition } from "./ecs/position"
-import { controller, update as updateController } from "./ecs/controller"
-import { sprite, update as updateSprite } from "./ecs/sprite"
-import { fov, update as updateFov } from "./ecs/fov"
-import { fogOfWar, update as updateFoW } from "./ecs/fog_of_war"
-component("snake", snake)
-component("position", position)
-component("controller", controller)
-component("sprite", sprite)
-component("fov", fov)
-component("fogOfWar", fogOfWar)
+import { blocks, animations } from "./blocks"
 
 export default class Game {
-	seed = "suce ma bite2"
+	seed = Math.random().toString(16)
 	rng = seedrandom(this.seed)
 
 	background = createDungeon({
@@ -33,19 +20,14 @@ export default class Game {
 	height = this.background.height
 	foreground = Array(this.width * this.height).fill(null)
 
+	systems = []
+
 	snake = entity()
 	fogOfWar = entity()
 
-	systems = [
-		updateController,
-		updateSnake,
-		updatePosition,
-		updateSprite,
-		updateFov,
-		updateFoW,
-	]
-
 	constructor() {
+		this.initECS()
+
 		this.background.forEach(
 			(c, i) =>
 				c !== "empty" &&
@@ -73,10 +55,33 @@ export default class Game {
 			height: this.height,
 		})
 
+		entity()
+			.add("position", { x: 13, y: 3 })
+			.add("sprite", { type: blocks.enemy.red })
+			.add("animation", { frames: animations.enemyRed, flipV: true })
+		entity()
+			.add("position", { x: 14, y: 5 })
+			.add("sprite", { type: blocks.enemy.green })
+			.add("animation", { frames: animations.enemyGreen, flipV: true })
+
 		// first update
 		this.tick()
 
 		console.log(this)
+	}
+
+	initECS() {
+		if (this.systems.length) return
+		const context = require.context("./ecs", false, /\.js$/)
+
+		for (const path of context.keys()) {
+			let { name, update, component: comp, order } = context(path)
+			update.order = order
+			component(name, comp)
+			this.systems.push(update)
+		}
+
+		this.systems.sort((a, b) => a.order > b.order)
 	}
 
 	tick() {

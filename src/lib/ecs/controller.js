@@ -1,4 +1,5 @@
 import { directions } from "../directions"
+import _order from "./order.json"
 
 export function controller(e) {
 	let listener = evt =>
@@ -19,3 +20,4 @@ export function update(game) {}
 
 export { controller as component }
 export const name = "controller"
+export const order = _order[name]
