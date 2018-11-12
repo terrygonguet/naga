@@ -89,7 +89,7 @@ export default class Game {
 				frames: animations[isRed ? "enemyRed" : "enemyGreen"]
 					.slice()
 					.sort(f => this.rng() < 0.5),
-				flipV: true,
+				flipV: this.rng() > 0.5,
 			})
 			.add("hitbox", { canBeKilled: true })
 	}
@@ -105,7 +105,7 @@ export default class Game {
 			this.systems.push(update)
 		}
 
-		this.systems.sort((a, b) => a.order > b.order)
+		this.systems.sort((a, b) => (a.order > b.order ? 1 : -1))
 	}
 
 	tick() {
