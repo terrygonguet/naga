@@ -88,7 +88,7 @@ export default class Game {
 			.add("animation", {
 				frames: animations[isRed ? "enemyRed" : "enemyGreen"]
 					.slice()
-					.sort(f => this.rng() < 0.5),
+					.sort(f => (this.rng() < 0.5 ? -1 : 1)),
 				flipV: this.rng() > 0.5,
 			})
 			.add("hitbox", { canBeKilled: true })
