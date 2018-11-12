@@ -25,7 +25,7 @@ export function setDirections({ up, down, left, right }) {
  * @param {String} direction
  * @returns {String}
  */
-export function oppositeDirection(direction) {
+export function reverse(direction) {
 	switch (direction) {
 		case directions.up:
 			return directions.down

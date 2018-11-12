@@ -1,12 +1,11 @@
 import { entity, findById, findByComponent } from "geotic"
-import {
-	directions,
-	turnLeft,
-	turnRight,
-	oppositeDirection,
-} from "../directions"
+import { directions, turnLeft, turnRight, reverse } from "../directions"
 import { blocks } from "../blocks"
-import _findKey from "lodash/findKey"
+import {
+	findKey as _findKey,
+	values as _values,
+	fromPairs as _fromPairs,
+} from "lodash"
 import { make_cmpPos } from "../tools"
 import _order from "./order.json"
 
@@ -19,14 +18,83 @@ import _order from "./order.json"
  * @returns {Entity}
  */
 function make_head({ x, y, direction }) {
-	return entity()
-		.add("position", { x, y })
-		.add("fov")
-		.add("sprite", {
-			type:
-				blocks.snakeHead[_findKey(directions, d => d === direction) || "right"],
-			isBackground: false,
-		})
+	return (
+		entity()
+			.add("position", { x, y })
+			.add("fov")
+			// .add("hitbox", { blocksMoving: true }) lol
+			.add("sprite", {
+				type:
+					blocks.snakeHead[
+						_findKey(directions, d => d === direction) || "right"
+					],
+				isBackground: false,
+			})
+	)
+}
+
+/**
+ * Returns the position if the cell in the supplied direction
+ * relative to the snake's head
+ * @param {Object} params
+ * @param {Object} params.snake The snake component
+ * @param {String} params.direction
+ * @returns {Object} { x, y }
+ */
+function getNextPos({ snake, direction }) {
+	let nextPos = { ...findById(snake.head).position }
+
+	switch (direction) {
+		case directions.up:
+			nextPos.y--
+			break
+		case directions.down:
+			nextPos.y++
+			break
+		case directions.left:
+			nextPos.x--
+			break
+		case directions.right:
+			nextPos.x++
+			break
+	}
+
+	return nextPos
+}
+
+/**
+ * Returns the controller.direction if valid,
+ * snake.lastDirection else
+ * @param {Object} params
+ * @param {Object} params.snake snake component
+ * @param {Object} params.controller controller component
+ * @returns {String}
+ */
+function getDirection({ snake, controller }) {
+	let direction = controller.direction
+	if (direction === reverse(snake.lastDirection))
+		direction = snake.lastDirection
+	return direction
+}
+
+/**
+ * Returns an object with the directions as keys
+ * and a bool value if the snake can move there
+ * @param {Object} snake snake component
+ * @returns {Object} { <direction.p>: Boolean, ...}
+ */
+function getPossibleDirections(snake) {
+	let opposite = reverse(snake.lastDirection)
+	let canMove = _values(directions).map(direction => {
+		if (direction === opposite) return [direction, false]
+		let nextPos = getNextPos({ snake, direction })
+		let cmpPos = make_cmpPos(nextPos)
+		let blockingEntities = findByComponent("position")
+			.filter(e => cmpPos(e.position))
+			.some(e => e?.hitbox?.blocksMoving)
+		return [direction, !blockingEntities]
+	})
+	return _fromPairs(canMove)
 }
 
 /**
@@ -56,54 +124,36 @@ export function snake(e, { length = 4, x = 4, y = 4 }) {
 
 export function update(game) {
 	let { snake, controller } = game.snake
+	if (!controller?.direction && !snake?.lastDirection) return
 
-	let canMove = false,
-		tries = 2,
-		nextPos,
+	let direction = getDirection({ snake, controller })
+	let canMove = getPossibleDirections(snake)
+
+	// find the first direction we can go in
+	direction = [
 		direction,
-		oldHead = findById(snake.head)
-	// BUG : fix "turn around" bug
-	do {
-		nextPos = { ...oldHead.position }
-		direction = controller.direction
-		if (direction === oppositeDirection(snake.lastDirection))
-			direction = snake.lastDirection
+		turnRight(direction),
+		turnLeft(direction),
+		reverse(direction),
+	].find(dir => canMove[dir])
+	// ye done goof'd
+	if (!direction) return game.die()
 
-		if (tries === 1) direction = turnRight(direction)
-		else if (tries === 0) direction = turnLeft(direction)
+	let nextPos = getNextPos({ snake, direction })
+	let cmpPos = make_cmpPos(nextPos)
+	let entities = findByComponent("position").filter(e => cmpPos(e.position))
 
-		switch (direction) {
-			case directions.up:
-				nextPos.y--
-				break
-			case directions.down:
-				nextPos.y++
-				break
-			case directions.left:
-				nextPos.x--
-				break
-			case directions.right:
-				nextPos.x++
-				break
-		}
-
-		let cmpPos = make_cmpPos(nextPos)
-		let nextCell = findByComponent("position").find(ent => cmpPos(ent.position))
-		if (nextCell?.hitbox?.blocksMoving) {
-			tries--
-		} else canMove = true
-
-		if (nextCell?.hitbox?.canBeKilled) {
-			nextCell?.destroy()
+	for (const ent of entities) {
+		if (ent?.hitbox?.canBeKilled) {
+			ent.destroy()
 			snake.length++
 		}
-
-		if (tries < 0) return game.die()
-	} while (!canMove)
+	}
 
 	snake.lastDirection = direction
 	controller.direction = direction
 
+	let oldHead = findById(snake.head)
 	// when the block becomes body it becomes snake
 	oldHead.sprite.type = blocks.snake
 
