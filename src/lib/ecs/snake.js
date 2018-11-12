@@ -62,7 +62,7 @@ export function update(game) {
 		nextPos,
 		direction,
 		oldHead = findById(snake.head)
-	// TODO : fix "turn around" bug
+	// BUG : fix "turn around" bug
 	do {
 		nextPos = { ...oldHead.position }
 		direction = controller.direction
@@ -105,8 +105,7 @@ export function update(game) {
 	controller.direction = direction
 
 	// when the block becomes body it becomes snake
-	// and loses the fov component
-	oldHead.remove("fov").sprite.type = blocks.snake
+	oldHead.sprite.type = blocks.snake
 
 	let head = make_head({ ...nextPos, direction })
 	snake.head = head.id

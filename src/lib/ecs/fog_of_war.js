@@ -1,4 +1,4 @@
-import { blocks } from "../blocks"
+import { blocks, modifiers } from "../blocks"
 import { findByComponent } from "geotic"
 import { make_xy2i } from "../tools"
 import _order from "./order.json"
@@ -11,13 +11,13 @@ import _order from "./order.json"
  * @param {Number} params.heigh
  */
 export function fogOfWar(e, { width, height }) {
-	let grid = Array(width * height).fill(true)
+	let grid = Array(width * height).fill(1)
 	let xy2i = make_xy2i(width)
 	// reveal the edges for A E S T H E T I C S
 	for (let x = 0; x < width; x++)
-		grid[xy2i(x, 0)] = grid[xy2i(x, height - 1)] = false
+		grid[xy2i(x, 0)] = grid[xy2i(x, height - 1)] = 0
 	for (let y = 0; y < width; y++)
-		grid[xy2i(0, y)] = grid[xy2i(width - 1, y)] = false
+		grid[xy2i(0, y)] = grid[xy2i(width - 1, y)] = 0
 	return {
 		grid,
 		width,
@@ -26,13 +26,24 @@ export function fogOfWar(e, { width, height }) {
 }
 
 export function update(game) {
-	let fogOfWar = findByComponent("fogOfWar")[0]?.fogOfWar.grid
+	let ent = findByComponent("fogOfWar")[0]
+	let fogOfWar = ent.fogOfWar.grid
 	if (!fogOfWar) return
 
 	// cover anything that hasn't been revealed yet
-	game.foreground = game.foreground.map((c, i) =>
-		fogOfWar[i] ? blocks.hidden : c
-	)
+	game.foreground = game.foreground.map((c, i) => {
+		let f = fogOfWar[i]
+		if (f === 1) {
+			return blocks.unknown
+		} else if (f === 0) {
+			return c
+		} else {
+			return blocks.shadow
+		}
+	})
+
+	// Shadow everything for next update
+	ent.fogOfWar.grid = fogOfWar.map(c => (!c ? 0.5 : c))
 }
 
 export { fogOfWar as component }

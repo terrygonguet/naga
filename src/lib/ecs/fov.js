@@ -48,7 +48,7 @@ export function update(game) {
 			if (!fogOfWar[xy2i(x, y)]) continue
 			else if (isInBounds(x, y)) {
 				// else we uncover it
-				fogOfWar[xy2i(x, y)] = false
+				fogOfWar[xy2i(x, y)] = 0
 				// get stopped i.e. by walls and doors
 				let cell = entities.find(e => cmpPos(e.position))
 				if (!cell?.hitbox?.blocksSight) queue.push(...threeByThree({ x, y }))

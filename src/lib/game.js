@@ -86,7 +86,9 @@ export default class Game {
 			.add("position", { x, y })
 			.add("sprite", { type: blocks.enemy[isRed ? "red" : "green"] })
 			.add("animation", {
-				frames: animations[isRed ? "enemyRed" : "enemyGreen"],
+				frames: animations[isRed ? "enemyRed" : "enemyGreen"]
+					.slice()
+					.sort(f => this.rng() < 0.5),
 				flipV: true,
 			})
 			.add("hitbox", { canBeKilled: true })

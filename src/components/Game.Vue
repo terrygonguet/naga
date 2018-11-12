@@ -37,7 +37,7 @@ export default {
 				"snake-head-up": [3, 4, -90],
 				"snake-head-down": [3, 4, 90],
 				empty: [2, 2],
-				shadow: [1, 4],
+				unknown: [1, 4],
 				door: [5, 4],
 				"enemy-red-1": [1, 5],
 				"enemy-red-2": [2, 5],
@@ -63,7 +63,8 @@ export default {
 			background-image: url("${this.spriteSheet}");
 			background-repeat: no-repeat;
 		}`)
-		// flip modifiers
+
+		// modifiers
 		sheet.insertRule(`.flipV {
 			filter: flipV;
 			transform: scaleX(-1);
@@ -72,6 +73,11 @@ export default {
 			filter: flipH;
 			transform: scaleY(-1);
 		}`)
+		sheet.insertRule(`.shadow {
+			background: rgba(0,0,0,0.5);
+			background-position: 1000px 1000px;
+		}`)
+
 		// create a rule for each sprite
 		for (const sprite in this.sprites) {
 			if (this.sprites.hasOwnProperty(sprite)) {

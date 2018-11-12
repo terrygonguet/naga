@@ -9,7 +9,8 @@ export const blocks = {
 	},
 
 	empty: "empty",
-	hidden: "shadow",
+	shadow: "shadow",
+	unknown: "unknown",
 	door: "door",
 
 	snake: "snake",
@@ -25,6 +26,12 @@ export const blocks = {
 		green: "enemy-green-1",
 		greenLow: "enemy-green-2",
 	},
+}
+
+export const modifiers = {
+	flipV: " flipV",
+	flipH: " flipH",
+	// shadow: " shadow",
 }
 
 export const walls = [
