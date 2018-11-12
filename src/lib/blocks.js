@@ -29,9 +29,9 @@ export const blocks = {
 }
 
 export const modifiers = {
-	flipV: " flipV",
-	flipH: " flipH",
-	// shadow: " shadow",
+	flipV: "flipV",
+	flipH: "flipH",
+	highlight: "highlight",
 }
 
 export const walls = [

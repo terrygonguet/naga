@@ -73,9 +73,8 @@ export default {
 			filter: flipH;
 			transform: scaleY(-1);
 		}`)
-		sheet.insertRule(`.shadow {
-			background: rgba(0,0,0,0.5);
-			background-position: 1000px 1000px;
+		sheet.insertRule(`.highlight {
+			filter: brightness(150%);
 		}`)
 
 		// create a rule for each sprite
@@ -89,6 +88,10 @@ export default {
 				}`)
 			}
 		}
+		sheet.insertRule(`.shadow {
+			background: rgba(0,0,0,0.5);
+			background-position: 1000px 1000px;
+		}`)
 
 		// TODO : use RAF
 		setInterval(() => this.game.tick(), 1000 / this.tps)

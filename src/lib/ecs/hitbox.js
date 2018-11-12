@@ -12,6 +12,9 @@ export function hitbox(
 	e,
 	{ blocksSight = false, blocksMoving = false, canBeKilled = false }
 ) {
+	if (canBeKilled) {
+		e.on("hit", () => e.destroy())
+	}
 	return { blocksMoving, blocksSight, canBeKilled }
 }
 
