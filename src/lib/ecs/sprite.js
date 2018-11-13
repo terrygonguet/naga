@@ -12,7 +12,7 @@ import _order from "./order.json"
  * @param {Boolean} [params.isBackground]
  * @param {String[]} [params.modifiers]
  */
-export function sprite(e, { type, isBackground = false, modifiers = [] }) {
+export function sprite(e, { type, isBackground = false, modifiers = [] } = {}) {
 	return { type, isBackground, modifiers }
 }
 

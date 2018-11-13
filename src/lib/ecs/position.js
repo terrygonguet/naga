@@ -7,7 +7,7 @@ import _order from "./order.json"
  * @param {Number} [params.x]
  * @param {Number} [params.y]
  */
-export function position(e, { x = 0, y = 0 }) {
+export function position(e, { x = 0, y = 0 } = {}) {
 	return { x, y }
 }
 

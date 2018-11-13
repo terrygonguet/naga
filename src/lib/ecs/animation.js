@@ -14,7 +14,7 @@ import { addModifier, removeModifier } from "./sprite"
  * @param {Boolean} [params.flipV]
  * @param {Boolean} [params.flipH]
  */
-export function animation(e, { frames, flipV = false, flipH = false }) {
+export function animation(e, { frames, flipV = false, flipH = false } = {}) {
 	if (!frames && frames.length) throw new Error("Empty animation supplied")
 
 	return {

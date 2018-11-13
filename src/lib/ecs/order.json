@@ -1,8 +1,10 @@
 {
 	"controller": 0,
 	"position": 0,
+	"perf": 0,
 	"hitbox": 0,
 	"snake": 10,
+	"ai": 20,
 	"animation": 50,
 	"sprite": 51,
 	"fov": 60,

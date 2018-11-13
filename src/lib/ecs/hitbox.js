@@ -10,7 +10,7 @@ import _order from "./order.json"
  */
 export function hitbox(
 	e,
-	{ blocksSight = false, blocksMoving = false, canBeKilled = false }
+	{ blocksSight = false, blocksMoving = false, canBeKilled = false } = {}
 ) {
 	if (canBeKilled) {
 		e.on("hit", () => e.destroy())

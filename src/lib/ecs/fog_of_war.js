@@ -10,7 +10,7 @@ import _order from "./order.json"
  * @param {Number} params.width
  * @param {Number} params.heigh
  */
-export function fogOfWar(e, { width, height }) {
+export function fogOfWar(e, { width, height } = {}) {
 	let grid = Array(width * height).fill(1)
 	let xy2i = make_xy2i(width)
 	// reveal the edges for A E S T H E T I C S

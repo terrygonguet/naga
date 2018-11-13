@@ -47,13 +47,7 @@ export default class Game {
 					})
 		)
 
-		this.snake
-			.add("snake", {
-				x: 4,
-				y: 4,
-				length: 4,
-			})
-			.add("controller")
+		this.snake.add("snake").add("controller")
 
 		this.fogOfWar.add("fogOfWar", {
 			width: this.width,
@@ -74,6 +68,8 @@ export default class Game {
 			this.make_enemy(pos)
 		}
 
+		entity().add("perf")
+
 		// first update
 		this.tick()
 
@@ -92,6 +88,7 @@ export default class Game {
 				flipV: this.rng() > 0.5,
 			})
 			.add("hitbox", { canBeKilled: true })
+			.add("ai") // if only it was this simple
 	}
 
 	initECS() {

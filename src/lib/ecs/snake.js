@@ -9,6 +9,7 @@ import {
 import { make_cmpPos } from "../tools"
 import _order from "./order.json"
 import { addModifier, removeModifier } from "./sprite"
+
 /**
  * A snake
  * @param {Entity} e The entity to attach the component to
@@ -17,7 +18,7 @@ import { addModifier, removeModifier } from "./sprite"
  * @param {Number} [params.x]
  * @param {Number} [params.y]
  */
-export function snake(e, { length = 4, x = 4, y = 4 }) {
+export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
 	return {
 		length,
 		head: null,
@@ -96,19 +97,15 @@ export function update(game) {
  * @returns {Entity}
  */
 function make_head({ x, y, direction }) {
-	return (
-		entity()
-			.add("position", { x, y })
-			.add("fov")
-			// .add("hitbox", { blocksMoving: true }) lol
-			.add("sprite", {
-				type:
-					blocks.snakeHead[
-						_findKey(directions, d => d === direction) || "right"
-					],
-				isBackground: false,
-			})
-	)
+	return entity()
+		.add("position", { x, y })
+		.add("fov")
+		.add("hitbox")
+		.add("sprite", {
+			type:
+				blocks.snakeHead[_findKey(directions, d => d === direction) || "right"],
+			isBackground: false,
+		})
 }
 
 /**
