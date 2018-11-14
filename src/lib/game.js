@@ -68,7 +68,7 @@ export default class Game {
 			this.make_enemy(pos)
 		}
 
-		entity().add("perf")
+		if (process.env.NODE_ENV === "development") entity().add("perf")
 
 		// first update
 		this.tick()
