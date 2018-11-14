@@ -102,9 +102,9 @@ function make_head({ x, y, direction }) {
 		.add("fov")
 		.add("hitbox")
 		.add("sprite", {
-			type:
-				blocks.snakeHead[_findKey(directions, d => d === direction) || "right"],
+			type: blocks.snakeHead,
 			isBackground: false,
+			modifiers: [_findKey(directions, d => d === direction) || "right"],
 		})
 }
 

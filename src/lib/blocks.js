@@ -7,24 +7,19 @@ export const blocks = {
 		btmLeft: "wall-bottom-left",
 		btmRight: "wall-bottom-right",
 	},
+	column: "column",
 
-	empty: "empty",
-	shadow: "shadow",
-	unknown: "unknown",
+	ground: "ground",
+	darkness: "darkness",
 	door: "door",
 
 	snake: "snake",
-	snakeHead: {
-		up: "snake-head-up",
-		down: "snake-head-down",
-		left: "snake-head-left",
-		right: "snake-head-right",
-	},
+	snakeHead: "snake-head",
 	enemy: {
-		red: "enemy-red-1",
-		redLow: "enemy-red-2",
-		green: "enemy-green-1",
-		greenLow: "enemy-green-2",
+		red: "red-1",
+		redLow: "red-2",
+		green: "green-1",
+		greenLow: "green-2",
 	},
 }
 
@@ -32,6 +27,11 @@ export const modifiers = {
 	flipV: "flipV",
 	flipH: "flipH",
 	highlight: "highlight",
+	up: "up",
+	down: "down",
+	left: "left",
+	right: "right",
+	transparent: "transparent",
 }
 
 export const walls = [
@@ -41,15 +41,10 @@ export const walls = [
 	blocks.walls.topRight,
 	blocks.walls.btmLeft,
 	blocks.walls.btmRight,
+	blocks.column,
 ]
 
-export const snake = [
-	blocks.snake,
-	blocks.snakeHead.down,
-	blocks.snakeHead.left,
-	blocks.snakeHead.right,
-	blocks.snakeHead.up,
-]
+export const snake = [blocks.snake, blocks.snakeHead]
 
 export const doorAndWalls = [...walls, blocks.door]
 

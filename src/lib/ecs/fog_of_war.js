@@ -30,15 +30,15 @@ export function update(game) {
 	let fogOfWar = ent.fogOfWar.grid
 	if (!fogOfWar) return
 
-	// cover anything that hasn't been revealed yet
+	// cover anything that hasn't been revealed yet and add shadow
 	game.foreground = game.foreground.map((c, i) => {
 		let f = fogOfWar[i]
 		if (f === 1) {
-			return blocks.unknown
+			return blocks.darkness
 		} else if (f === 0) {
 			return c
 		} else {
-			return blocks.shadow
+			return blocks.darkness + " " + modifiers.transparent // TODO : better ?
 		}
 	})
 

@@ -31,7 +31,7 @@ export default class Game {
 
 		this.background.forEach(
 			(c, i) =>
-				c !== "empty" &&
+				c !== "ground" &&
 				entity()
 					.add("position", {
 						x: i % this.width,
@@ -54,7 +54,7 @@ export default class Game {
 			height: this.height,
 		})
 
-		// make some enemies on empty spaces
+		// make some enemies on ground spaces
 		let max = 20 + Math.round(this.rng() * 10)
 		let i2xy = make_i2xy(this.width)
 		for (let i = 0; i < max; i++) {

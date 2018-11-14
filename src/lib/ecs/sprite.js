@@ -18,15 +18,16 @@ export function sprite(e, { type, isBackground = false, modifiers = [] } = {}) {
 
 export function update(game) {
 	// clear fg & bg before re-drawing
-	game.background = Array(game.background.length).fill(blocks.empty)
+	game.background = Array(game.background.length).fill(blocks.ground)
 	game.foreground = Array(game.background.length).fill(null)
 	let xy2i = make_xy2i(game.width)
 
 	findByComponent("sprite").forEach(ent => {
 		if (!ent.position) return
 		let { x, y } = ent.position
-		;(ent.sprite.isBackground ? game.background : game.foreground)[xy2i(x, y)] =
-			ent.sprite.type + " " + ent.sprite.modifiers.join(" ") // lol
+		;(ent.sprite.isBackground ? game.background : game.foreground)[
+			xy2i(x, y)
+		] = (ent.sprite.type + " " + ent.sprite.modifiers.join(" ")).trim() // lol
 	})
 }
 

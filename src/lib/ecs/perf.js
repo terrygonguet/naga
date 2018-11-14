@@ -8,7 +8,7 @@ import _order from "./order.json"
 export function perf(e) {
 	return {
 		mount() {
-			let el = document.createElement("p")
+			let el = document.createElement("span")
 			el.id = "tps"
 			el.style.position = "absolute"
 			el.style.top = "1rem"
@@ -35,12 +35,13 @@ export function update(game) {
 
 		let el = document.querySelector("#tps")
 		el && (el.innerHTML = `${(1000 / avg).toFixed(2)} TPS`)
-		performance.mark("before_perf")
 
-		if (entries.length > 500) {
+		if (entries.length > 150) {
 			performance.clearMarks()
 			performance.clearMeasures()
 		}
+
+		performance.mark("before_perf")
 	})
 }
 
