@@ -1,4 +1,5 @@
 import { findByComponent } from "geotic"
+import { dirname } from "path"
 
 /**
  * Makes a function that translates x y pos to linear array index
@@ -25,9 +26,9 @@ export function make_i2xy(width) {
 
 /**
  * Makes a function that checks if the given x y is in bounds
- * @param {Object} params
- * @param {Number} params.width The width of the grid
- * @param {Number} params.height The height of the grid
+ * @param {Object} dimensions
+ * @param {Number} dimensions.width The width of the grid
+ * @param {Number} dimensions.height The height of the grid
  * @returns {Function}
  */
 export function make_isInBounds({ width, height }) {
@@ -38,9 +39,9 @@ export function make_isInBounds({ width, height }) {
 
 /**
  * Makes a function that compares a position with the first position
- * @param {Object} params
- * @param {Number} params.x1
- * @param {Number} params.y1
+ * @param {Object} pt1
+ * @param {Number} pt1.x1
+ * @param {Number} pt1.y1
  * @returns {Function}
  */
 export function make_cmpPos({ x: x1, y: y1 }) {
@@ -50,10 +51,35 @@ export function make_cmpPos({ x: x1, y: y1 }) {
 }
 
 /**
+ * Compare two points and returns true if they are the same
+ * @param {Object} pt1
+ * @param {Number} pt1.x
+ * @param {Number} pt1.y
+ * @param {Object} pt2
+ * @param {Number} pt2.x
+ * @param {Number} pt2.y
+ */
+export function cmpPts({ x: x1, y: y1 }, { x: x2, y: y2 }) {
+	return x1 === x2 && y1 === y2
+}
+
+/**
+ * Used to filter an array of entities by position
+ * @param {Object} point
+ * @param {Number} point.x
+ * @param {Number} point.y
+ */
+export function byPosition({ x, y }) {
+	return function(entity) {
+		return cmpPts(entity?.position, { x, y })
+	}
+}
+
+/**
  * Makes a function that returns the distance of the second point with the first
- * @param {Object} params
- * @param {Number} params.x1
- * @param {Number} params.y1
+ * @param {Object} pt1
+ * @param {Number} pt1.x1
+ * @param {Number} pt1.y1
  * @returns {Function}
  */
 export function make_distanceTo({ x: x1, y: y1 }) {

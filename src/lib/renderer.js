@@ -1,4 +1,4 @@
-import { Application, Texture, Spritesheet, Sprite } from "pixi.js"
+import { Application, Texture, Spritesheet, Sprite, filters } from "pixi.js"
 import spritesData from "../assets/micro_dungeon_tileset.json"
 import spritesImage from "../assets/micro_dungeon_tileset.png"
 import { make_i2xy, make_xy2i } from "./tools"
@@ -14,6 +14,7 @@ export default class Renderer {
 	background = []
 	foreground = []
 	sprites = []
+	dirty = true
 
 	constructor({ el }) {
 		el = typeof el === "string" ? document.querySelector(el) : el
@@ -43,6 +44,7 @@ export default class Renderer {
 		this.foreground = foreground
 		this.width = width
 		this.height = height
+		this.dirty = true
 
 		if (this.sprites.length !== width * height * 2) {
 			// TODO : optimize
@@ -68,6 +70,7 @@ export default class Renderer {
 	}
 
 	update(delta) {
+		if (!this.dirty) return
 		let cells = this.background.concat(this.foreground)
 		let length = cells.length
 		for (let i = 0; i < length; i++) {
@@ -79,6 +82,7 @@ export default class Renderer {
 			clearModifiers(sprite)
 			for (const mod of mods) modifiers[mod]?.(sprite)
 		}
+		this.dirty = false
 	}
 }
 
@@ -86,8 +90,12 @@ function clearModifiers(sprite) {
 	sprite.rotation = 0
 	sprite.alpha = 1
 	sprite.scale.set(1, 1)
+	sprite.filters = null
 	return sprite
 }
+
+let brightenFilter = new filters.ColorMatrixFilter()
+brightenFilter.brightness(1.5)
 
 const modifiers = {
 	transparent(sprite) {
@@ -112,6 +120,10 @@ const modifiers = {
 	},
 	flipH(sprite) {
 		sprite.scale.y = -1
+		return sprite
+	},
+	highlight(sprite) {
+		sprite.filters = [brightenFilter]
 		return sprite
 	},
 }

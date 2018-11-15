@@ -7,13 +7,12 @@ import _order from "./order.json"
  * @param {Object} params
  * @param {Number} [params.captureLength]
  */
-export function perf(e, { captureLength = 50 } = {}) {
+export function perf(e, { captureLength = 5_000 } = {}) {
 	return {
-		deltas: [],
+		ticks: 0,
 		captureLength,
-		old: 0,
+		start: performance.now(),
 		mount() {
-			let el = document.createElement("span")
 			el.id = "tps"
 			el.style.position = "absolute"
 			el.style.top = "1rem"
@@ -23,24 +22,27 @@ export function perf(e, { captureLength = 50 } = {}) {
 			document.body.append(el)
 		},
 		unmount() {
-			document.querySelector("#tps").remove()
+			el.remove()
 		},
 	}
 }
 
 export function update(game) {
 	findByComponent("perf").forEach(ent => {
-		let now = performance.now()
-		let { deltas, captureLength, old } = ent.perf
-		deltas.push(now - old)
-		if (deltas.length > captureLength) deltas.shift()
-		ent.perf.old = now
+		let { ticks, captureLength, start } = ent.perf
+		let time = performance.now() - start
+		ent.perf.ticks++
 
-		let avg = deltas.reduce((acc, cur) => acc + cur, 0) / deltas.length
-		let el = document.querySelector("#tps")
-		el && (el.innerHTML = `${(1000 / avg).toFixed(2)} TPS`)
+		if (time > captureLength) {
+			ent.perf.ticks = 1
+			ent.perf.start = performance.now()
+		}
+
+		el.innerHTML = `${((ticks / time) * 1000).toFixed(2)} TPS`
 	})
 }
+
+let el = document.createElement("span")
 
 export { perf as component }
 export const name = "perf"

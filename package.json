@@ -33,6 +33,7 @@
 	"homepage": "https://github.com/terrygonguet/solitaire#readme",
 	"dependencies": {
 		"autoprefixer": "^9.2.1",
+		"bresenham-line": "^2.0.0",
 		"express": "^4.16.4",
 		"geotic": "^2.4.1",
 		"lodash": "^4.17.11",

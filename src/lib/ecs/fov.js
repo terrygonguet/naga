@@ -1,5 +1,5 @@
 import { findByComponent } from "geotic"
-import { make_xy2i, make_isInBounds, make_cmpPos } from "../tools"
+import { make_xy2i, make_isInBounds, make_cmpPos, byPosition } from "../tools"
 import _order from "./order.json"
 
 /**
@@ -36,13 +36,13 @@ export function update(game) {
 	let xy2i = make_xy2i(game.width)
 	let isInBounds = make_isInBounds(game)
 	let entities = findByComponent("position")
+
 	findByComponent("fov").forEach(ent => {
 		let { x, y } = ent.position
 		let queue = threeByThree({ x, y })
 
 		while (queue.length) {
 			let { x, y } = queue.shift()
-			let cmpPos = make_cmpPos({ x, y })
 
 			// if we already uncovered this part we don't do anymore
 			if (!fogOfWar[xy2i(x, y)]) continue
@@ -50,8 +50,10 @@ export function update(game) {
 				// else we uncover it
 				fogOfWar[xy2i(x, y)] = 0
 				// get stopped i.e. by walls and doors
-				let cell = entities.find(e => cmpPos(e.position))
-				if (!cell?.hitbox?.blocksSight) queue.push(...threeByThree({ x, y }))
+				let blocksSight = entities
+					.filter(byPosition({ x, y }))
+					.some(e => e?.hitbox?.blocksSight)
+				if (!blocksSight) queue.push(...threeByThree({ x, y }))
 			}
 		}
 	})

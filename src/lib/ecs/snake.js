@@ -75,7 +75,7 @@ export function update(game) {
 	controller.direction = direction
 
 	let oldHead = findById(snake.head)
-	// when the block becomes body it becomes snake
+	// // when the block becomes body it becomes snake
 	oldHead.sprite.type = blocks.snake
 
 	let head = make_head({ ...nextPos, direction })
@@ -106,6 +106,7 @@ function make_head({ x, y, direction }) {
 			isBackground: false,
 			modifiers: [_findKey(directions, d => d === direction) || "right"],
 		})
+		.tag("snake")
 }
 
 /**
