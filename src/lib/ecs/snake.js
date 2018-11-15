@@ -6,7 +6,7 @@ import {
 	values as _values,
 	fromPairs as _fromPairs,
 } from "lodash"
-import { make_cmpPos } from "../tools"
+import { make_cmpPos, findByCanTick } from "../tools"
 import _order from "./order.json"
 import { addModifier, removeModifier } from "./sprite"
 
@@ -44,7 +44,7 @@ export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
 }
 
 export function update(game) {
-	let { snake, controller } = game.snake
+	let { snake, controller } = findByCanTick("snake")[0] || {}
 	if (!controller?.direction && !snake?.lastDirection) return
 
 	let direction = getDirection({ snake, controller })

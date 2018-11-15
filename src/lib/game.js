@@ -22,16 +22,14 @@ export default class Game {
 	foreground = Array(this.width * this.height).fill(null)
 
 	systems = []
-
-	snake = entity()
-	fogOfWar = entity()
+	time = 0
 
 	constructor() {
 		this.initECS()
 
 		this.background.forEach(
 			(c, i) =>
-				c !== "ground" &&
+				c !== blocks.ground &&
 				entity()
 					.add("position", {
 						x: i % this.width,
@@ -47,9 +45,12 @@ export default class Game {
 					})
 		)
 
-		this.snake.add("snake").add("controller")
+		entity()
+			.add("snake")
+			.add("controller")
+			.add("speed", { speed: 4 })
 
-		this.fogOfWar.add("fogOfWar", {
+		entity().add("fogOfWar", {
 			width: this.width,
 			height: this.height,
 		})
@@ -88,6 +89,7 @@ export default class Game {
 				flipV: this.rng() > 0.5,
 			})
 			.add("hitbox", { canBeKilled: true })
+			.add("speed", { speed: 1.5 })
 			.add("ai") // if only it was this simple
 	}
 
@@ -107,9 +109,6 @@ export default class Game {
 
 	tick() {
 		this.systems.forEach(s => s(this))
-	}
-
-	die() {
-		this.snake.destroy()
+		this.time++
 	}
 }

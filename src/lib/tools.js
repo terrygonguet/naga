@@ -1,3 +1,5 @@
+import { findByComponent } from "geotic"
+
 /**
  * Makes a function that translates x y pos to linear array index
  * @param {Number} width The width of the grid
@@ -45,4 +47,25 @@ export function make_cmpPos({ x: x1, y: y1 }) {
 	return function({ x: x2, y: y2 }) {
 		return x1 === x2 && y1 === y2
 	}
+}
+
+/**
+ * Makes a function that returns the distance of the second point with the first
+ * @param {Object} params
+ * @param {Number} params.x1
+ * @param {Number} params.y1
+ * @returns {Function}
+ */
+export function make_distanceTo({ x: x1, y: y1 }) {
+	return function({ x: x2, y: y2 }) {
+		return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+	}
+}
+
+/**
+ * Returns an array of entites with the component and that will tick this update
+ * @param {String} component The name of the component
+ */
+export function findByCanTick(component) {
+	return findByComponent(component).filter(c => c?.speed.canTick || !c.speed)
 }

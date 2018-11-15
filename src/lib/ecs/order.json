@@ -1,8 +1,9 @@
 {
-	"controller": 0,
-	"position": 0,
-	"perf": 0,
-	"hitbox": 0,
+	"speed": 0,
+	"controller": 1,
+	"position": 1,
+	"perf": 1,
+	"hitbox": 1,
 	"snake": 10,
 	"ai": 20,
 	"animation": 50,

@@ -39,7 +39,8 @@
 		"nodemon": "^1.18.4",
 		"pixi.js": "^4.8.2",
 		"seedrandom": "^2.4.4",
-		"vue": "^2.5.17"
+		"vue": "^2.5.17",
+		"xstate": "^4.1.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.1.5",

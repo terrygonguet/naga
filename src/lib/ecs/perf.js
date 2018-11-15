@@ -4,9 +4,14 @@ import _order from "./order.json"
 /**
  * Shows performance stats
  * @param {Entity} e The entity to attach the component to
+ * @param {Object} params
+ * @param {Number} [params.captureLength]
  */
-export function perf(e) {
+export function perf(e, { captureLength = 50 } = {}) {
 	return {
+		deltas: [],
+		captureLength,
+		old: 0,
 		mount() {
 			let el = document.createElement("span")
 			el.id = "tps"
@@ -16,7 +21,6 @@ export function perf(e) {
 			el.style.fontFamily = "Monospace"
 			el.style.fontSize = "1.6rem"
 			document.body.append(el)
-			performance.mark("before_perf")
 		},
 		unmount() {
 			document.querySelector("#tps").remove()
@@ -26,22 +30,15 @@ export function perf(e) {
 
 export function update(game) {
 	findByComponent("perf").forEach(ent => {
-		performance.mark("after_perf")
+		let now = performance.now()
+		let { deltas, captureLength, old } = ent.perf
+		deltas.push(now - old)
+		if (deltas.length > captureLength) deltas.shift()
+		ent.perf.old = now
 
-		performance.measure("perf", "before_perf", "after_perf")
-		let entries = performance.getEntriesByName("perf", "measure")
-		let avg =
-			entries.reduce((acc, cur) => acc + cur.duration, 0) / entries.length
-
+		let avg = deltas.reduce((acc, cur) => acc + cur, 0) / deltas.length
 		let el = document.querySelector("#tps")
 		el && (el.innerHTML = `${(1000 / avg).toFixed(2)} TPS`)
-
-		if (entries.length > 150) {
-			performance.clearMarks()
-			performance.clearMeasures()
-		}
-
-		performance.mark("before_perf")
 	})
 }
 

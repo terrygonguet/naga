@@ -49,6 +49,6 @@ export const snake = [blocks.snake, blocks.snakeHead]
 export const doorAndWalls = [...walls, blocks.door]
 
 export const animations = {
-	enemyRed: [[blocks.enemy.red, 2], [blocks.enemy.redLow, 2]],
-	enemyGreen: [[blocks.enemy.greenLow, 2], [blocks.enemy.green, 2]],
+	enemyRed: [[blocks.enemy.red, 8], [blocks.enemy.redLow, 8]],
+	enemyGreen: [[blocks.enemy.greenLow, 8], [blocks.enemy.green, 8]],
 }
