@@ -30,7 +30,7 @@ let aimachine = Machine({
  * @param {Number} [params.chanceToMove]
  * @param {Number} [params.sightRange]
  */
-export function ai(e, { chanceToMove = 0.4, sightRange = 10 } = {}) {
+export function ai(e, { chanceToMove = 0.1, sightRange = 10 } = {}) {
 	return { chanceToMove, sightRange, state: aimachine.initial, target: null }
 }
 
@@ -80,10 +80,19 @@ export function update(game) {
 					let moveTo = { ...pos }
 					if (Math.abs(dx) > Math.abs(dy)) moveTo.x += Math.sign(dx)
 					else moveTo.y += Math.sign(dy)
-					let canMove = !findByComponent("position")
-						.filter(byPosition(moveTo))
-						.some(e => e.hitbox)
-					if (canMove) ent.position = moveTo // TODO : attack
+
+					// if it's not the head and we can reach snake we attack
+					let isHead =
+						findById(closestSnake.tags.snake.id).snake.head === closestSnake.id
+					if (!isHead && cmpPts(moveTo, closestSnake.position)) {
+						closestSnake.emit("hit", ent.id)
+					} else {
+						// we check if the way is clear and move
+						let canMove = !findByComponent("position")
+							.filter(byPosition(moveTo))
+							.some(e => e.hitbox)
+						if (canMove) ent.position = moveTo
+					}
 				}
 				break
 		}

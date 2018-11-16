@@ -1,9 +1,20 @@
-import { Application, Texture, Spritesheet, Sprite, filters } from "pixi.js"
+import {
+	Application,
+	Texture,
+	Spritesheet,
+	Sprite,
+	filters,
+	Point,
+	settings,
+	SCALE_MODES,
+} from "pixi.js"
 import spritesData from "../assets/micro_dungeon_tileset.json"
 import spritesImage from "../assets/micro_dungeon_tileset.png"
 import { make_i2xy, make_xy2i } from "./tools"
 
 spritesData.meta.image = spritesImage
+settings.SCALE_MODE = SCALE_MODES.NEAREST
+settings.RESOLUTION = window.devicePixelRatio
 
 export default class Renderer {
 	width = 0
@@ -63,8 +74,8 @@ export default class Renderer {
 			})
 
 			this.stage.setTransform(
-				innerWidth / 2 - this.stage.width / 2,
-				innerHeight / 2 - this.stage.height / 2
+				Math.round(innerWidth / 2 - this.stage.width / 2),
+				Math.round(innerHeight / 2 - this.stage.height / 2)
 			)
 		}
 	}

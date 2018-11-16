@@ -94,8 +94,8 @@ export default class Game {
 				flipV: this.rng() > 0.5,
 			})
 			.add("hitbox", { canBeKilled: true })
-			.add("speed", { speed: 1.5 })
-			.add("ai") // if only it was this simple
+			.add("speed", { speed: 2 })
+			.add("ai", { chancetoMove: 0.3 }) // if only it was this simple
 			.tag("enemy")
 	}
 

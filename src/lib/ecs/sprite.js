@@ -40,8 +40,9 @@ export function update(game) {
 export function addModifier(ent, modifier) {
 	if (!ent.sprite) return
 	let modifiers = ent.sprite.modifiers
-	if (modifiers.indexOf(modifier) !== -1) return
+	if (modifiers.indexOf(modifier) !== -1) return ent
 	modifiers.push(modifier)
+	return ent
 }
 
 /**
@@ -50,11 +51,12 @@ export function addModifier(ent, modifier) {
  * @param {String} modifier
  */
 export function removeModifier(ent, modifier) {
-	if (!ent.sprite) return
+	if (!ent.sprite) return ent
 	let modifiers = ent.sprite.modifiers
 	let i = modifiers.indexOf(modifier)
-	if (i === -1) return
+	if (i === -1) return ent
 	modifiers.splice(i, 1)
+	return ent
 }
 
 export { sprite as component }
