@@ -3,6 +3,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const CleanWebpackPlugin = require("clean-webpack-plugin")
 const VueLoaderPlugin = require("vue-loader/lib/plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+// .BundleAnalyzerPlugin
 
 module.exports = {
 	entry: {
@@ -19,6 +21,7 @@ module.exports = {
 		}),
 		new VueLoaderPlugin(),
 		new MiniCssExtractPlugin({ filename: "[name].css" }),
+		// new BundleAnalyzerPlugin({ defaultSizes: "parsed" }),
 	],
 	module: {
 		rules: [
