@@ -1,16 +1,18 @@
+// @flow
+import type { Block } from "./blocks"
 import _uniq from "lodash/uniq"
 import { blocks } from "./blocks"
 import { make_xy2i, make_i2xy } from "./tools"
 
+export type Dungeon = {
+	background: Array<Block>,
+	foreground: Array<Block>,
+	width: number,
+	height: number,
+}
+
 /**
  * Creates a dungeon and returns it as a linear Array
- * @param {Object} params
- * @param {Number} params.nbRoomH
- * @param {Number} params.nbRoomW
- * @param {Number} params.roomWidth
- * @param {Number} params.roomHeight
- * @param {Function} params.rng
- * @returns {String[]}
  */
 export function createDungeon({
 	nbRoomW,
@@ -18,10 +20,16 @@ export function createDungeon({
 	roomWidth,
 	roomHeight,
 	rng,
-}) {
+}: {
+	nbRoomW: number,
+	nbRoomH: number,
+	roomWidth: number,
+	roomHeight: number,
+	rng: Function,
+}): Dungeon {
 	let width = nbRoomW * (roomWidth - 1) + 1
 	let height = nbRoomH * (roomHeight - 1) + 1
-	let grid = Array(width * height).fill(blocks.ground)
+	let grid: Array<Block> = Array(width * height).fill(blocks.ground)
 	let xy2iGrid = make_xy2i(width),
 		i2xyGrid = make_i2xy(width),
 		xy2iRooms = make_xy2i(nbRoomW),
@@ -29,9 +37,6 @@ export function createDungeon({
 	// actual room width/height with starter wall
 	let rw = roomWidth - 1,
 		rh = roomHeight - 1
-
-	grid.width = width
-	grid.height = height
 
 	// init room graph
 	let rooms = Array(nbRoomW * nbRoomH)
@@ -143,14 +148,14 @@ export function createDungeon({
 		if (grid[i] !== blocks.wall) continue
 		let { x, y } = i2xyGrid(i)
 		let below = grid[xy2iGrid(x, y + 1)]
-		if (!below || below === blocks.ground) grid[i] = blocks.walls.top
+		if (!below || below === blocks.ground) grid[i] = blocks.wallTop
 	}
 
 	// corners
-	grid[0] = blocks.walls.topLeft
-	grid[width - 1] = blocks.walls.topRight
-	grid[xy2iGrid(0, height - 1)] = blocks.walls.btmLeft
-	grid[grid.length - 1] = blocks.walls.btmRight
+	grid[0] = blocks.wallTopLeft
+	grid[width - 1] = blocks.wallTopRight
+	grid[xy2iGrid(0, height - 1)] = blocks.wallBtmLeft
+	grid[grid.length - 1] = blocks.wallBtmRight
 
-	return grid
+	return { background: grid, width, height, foreground: grid.map(c => null) }
 }

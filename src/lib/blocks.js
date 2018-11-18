@@ -1,12 +1,13 @@
-export const blocks = {
+// @flow
+export type Block = string | null
+
+export const blocks: { [key: string]: Block } = {
 	wall: "wall",
-	walls: {
-		top: "wall-top",
-		topLeft: "wall-top-left",
-		topRight: "wall-top-right",
-		btmLeft: "wall-bottom-left",
-		btmRight: "wall-bottom-right",
-	},
+	wallTop: "wall-top",
+	wallTopLeft: "wall-top-left",
+	wallTopRight: "wall-top-right",
+	wallBtmLeft: "wall-bottom-left",
+	wallBtmRight: "wall-bottom-right",
 	column: "column",
 
 	ground: "ground",
@@ -15,15 +16,15 @@ export const blocks = {
 
 	snake: "snake",
 	snakeHead: "snake-head",
-	enemy: {
-		red: "red-1",
-		redLow: "red-2",
-		green: "green-1",
-		greenLow: "green-2",
-	},
+	enemyRed: "red-1",
+	enemyRedLow: "red-2",
+	enemyGreen: "green-1",
+	enemyGreenLow: "green-2",
 }
 
-export const modifiers = {
+export type Modifier = string
+
+export const modifiers: { [key: string]: Modifier } = {
 	flipV: "flipV",
 	flipH: "flipH",
 	highlight: "highlight",
@@ -34,21 +35,21 @@ export const modifiers = {
 	transparent: "transparent",
 }
 
-export const walls = [
+export const walls: Array<Block> = [
 	blocks.wall,
-	blocks.walls.top,
-	blocks.walls.topLeft,
-	blocks.walls.topRight,
-	blocks.walls.btmLeft,
-	blocks.walls.btmRight,
+	blocks.wallTop,
+	blocks.wallTopLeft,
+	blocks.wallTopRight,
+	blocks.wallBtmLeft,
+	blocks.wallBtmRight,
 	blocks.column,
 ]
 
-export const snake = [blocks.snake, blocks.snakeHead]
+export const snake: Array<Block> = [blocks.snake, blocks.snakeHead]
 
-export const doorAndWalls = [...walls, blocks.door]
+export const doorAndWalls: Array<Block> = [...walls, blocks.door]
 
-export const animations = {
-	enemyRed: [[blocks.enemy.red, 8], [blocks.enemy.redLow, 8]],
-	enemyGreen: [[blocks.enemy.greenLow, 8], [blocks.enemy.green, 8]],
+export const animations: { [key: string]: Array<[Block, number]> } = {
+	enemyRed: [[blocks.Red, 8], [blocks.RedLow, 8]],
+	enemyGreen: [[blocks.GreenLow, 8], [blocks.Green, 8]],
 }

@@ -1,4 +1,4 @@
-import { findByComponent } from "geotic"
+import { findByComponent } from "../geotic"
 import { make_xy2i, make_isInBounds, make_cmpPos, byPosition } from "../tools"
 import _order from "./order.json"
 

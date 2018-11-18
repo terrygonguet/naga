@@ -1,5 +1,5 @@
 import { blocks } from "../blocks"
-import { findByComponent } from "geotic"
+import { findByComponent } from "../geotic"
 import { make_xy2i } from "../tools"
 import _order from "./order.json"
 

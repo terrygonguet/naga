@@ -1,5 +1,7 @@
+// @flow
+import type { Block } from "./blocks"
 import seedrandom from "seedrandom"
-import { entity, component, findByComponent, findById } from "geotic"
+import { entity, component, findByComponent, findById } from "./geotic"
 import { createDungeon } from "./dungeon"
 import { make_i2xy, make_cmpPos, byPosition } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
@@ -9,26 +11,35 @@ import { blocks, animations, walls, doorAndWalls } from "./blocks"
 */
 
 export default class Game {
-	seed = Math.random().toString(16)
-	rng = seedrandom(this.seed)
-
-	background = createDungeon({
-		roomWidth: 9,
-		roomHeight: 9,
-		nbRoomW: 6,
-		nbRoomH: 6,
-		rng: this.rng,
-	})
-
-	// TODO : fix ugly (probably config file ?)
-	width = this.background.width
-	height = this.background.height
-	foreground = Array(this.width * this.height).fill(null)
-
-	systems = []
-	time = 0
+	seed: string
+	rng: Function
+	background: Array<Block>
+	foreground: Array<Block>
+	width: number
+	height: number
+	systems: Array<Function>
+	time: number
 
 	constructor() {
+		this.seed = Math.random().toString(16)
+		this.rng = seedrandom(this.seed)
+
+		let dungeon = createDungeon({
+			roomWidth: 9,
+			roomHeight: 9,
+			nbRoomW: 6,
+			nbRoomH: 6,
+			rng: this.rng,
+		})
+
+		this.background = dungeon.background
+		this.foreground = dungeon.foreground
+		this.width = dungeon.width
+		this.height = dungeon.height
+
+		this.systems = []
+		this.time = 0
+
 		this.initECS()
 
 		this.background.forEach(
@@ -81,11 +92,11 @@ export default class Game {
 		console.log(this, findByComponent, findById)
 	}
 
-	make_enemy({ x, y }) {
+	make_enemy({ x, y }: { x: number, y: number }) {
 		let isRed = this.rng() < 0.5
 		entity()
 			.add("position", { x, y })
-			.add("sprite", { type: blocks.enemy[isRed ? "red" : "green"] })
+			.add("sprite", { type: blocks[isRed ? "enemyRed" : "enemyGreen"] })
 			.add("animation", {
 				// swap animation sometimes
 				frames: animations[isRed ? "enemyRed" : "enemyGreen"]
@@ -101,7 +112,7 @@ export default class Game {
 
 	initECS() {
 		if (this.systems.length) return
-		const context = require.context("./ecs", false, /\.js$/)
+		const context = (require: any).context("./ecs", false, /\.js$/)
 
 		for (const path of context.keys()) {
 			let { name, update, component: comp, order } = context(path)

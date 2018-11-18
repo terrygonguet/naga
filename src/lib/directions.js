@@ -1,7 +1,16 @@
+// @flow
+export type Direction = string
+export type Directions = {
+	up: Direction,
+	down: Direction,
+	left: Direction,
+	right: Direction,
+}
+
 /**
  * The key codes associated with the 4 directions
  */
-export let directions = {
+export let directions: Directions = {
 	up: "ArrowUp",
 	left: "ArrowLeft",
 	down: "ArrowDown",
@@ -10,22 +19,25 @@ export let directions = {
 
 /**
  * Changes the mapped direction key codes
- * @param {Object} params
- * @param {String} params.up
- * @param {String} params.down
- * @param {String} params.left
- * @param {String} params.right
  */
-export function setDirections({ up, down, left, right }) {
+export function setDirections({
+	up,
+	down,
+	left,
+	right,
+}: {
+	up: Direction,
+	down: Direction,
+	left: Direction,
+	right: Direction,
+}) {
 	directions = { up, down, left, right }
 }
 
 /**
  * Returns the opposite of the given direction
- * @param {String} direction
- * @returns {String}
  */
-export function reverse(direction) {
+export function reverse(direction: Direction): ?Direction {
 	switch (direction) {
 		case directions.up:
 			return directions.down
@@ -42,10 +54,8 @@ export function reverse(direction) {
 
 /**
  * Returns the direction rotated right
- * @param {String} direction
- * @returns {String}
  */
-export function turnRight(direction) {
+export function turnRight(direction: Direction): ?Direction {
 	switch (direction) {
 		case directions.up:
 			return directions.right
@@ -62,10 +72,8 @@ export function turnRight(direction) {
 
 /**
  * Returns the direction rotated left
- * @param {String} direction
- * @returns {String}
  */
-export function turnLeft(direction) {
+export function turnLeft(direction: Direction): ?Direction {
 	switch (direction) {
 		case directions.up:
 			return directions.left

@@ -1,4 +1,4 @@
-import { entity, findById, findByComponent } from "geotic"
+import { entity, findById, findByComponent } from "../geotic"
 import { directions, turnLeft, turnRight, reverse } from "../directions"
 import { blocks, modifiers } from "../blocks"
 import {

@@ -1,10 +1,12 @@
-import { blocks, modifiers, animations } from "../blocks"
-import { findByComponent, findById, findByTag } from "geotic"
+// @flow
+import { modifiers } from "../blocks"
+import { findByComponent, findById, findByTag } from "../geotic"
 import { cmpPts, findByCanTick, make_distanceTo, byPosition } from "../tools"
 import _order from "./order.json"
 import { Machine } from "xstate"
 import line from "bresenham-line"
 import { addModifier, removeModifier } from "./sprite"
+import type Game from "../game"
 
 let aimachine = Machine({
 	id: "ai",
@@ -23,18 +25,27 @@ let aimachine = Machine({
 	},
 })
 
+export type AIComponent = {
+	chanceToMove: number,
+	sightRange: number,
+	state: string,
+	target: number | null,
+}
+
 /**
  * Move around randomly for now
- * @param {Entity} e The entity to attach the component to
- * @param {Object} params
- * @param {Number} [params.chanceToMove]
- * @param {Number} [params.sightRange]
  */
-export function ai(e, { chanceToMove = 0.1, sightRange = 10 } = {}) {
+export function ai(
+	e: any,
+	{
+		chanceToMove = 0.1,
+		sightRange = 10,
+	}: { chanceToMove?: number, sightRange?: number } = {}
+): AIComponent {
 	return { chanceToMove, sightRange, state: aimachine.initial, target: null }
 }
 
-export function update(game) {
+export function update(game: Game) {
 	findByCanTick("ai").forEach(ent => {
 		if (!ent.position) return
 

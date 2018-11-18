@@ -1,4 +1,4 @@
-import { findByComponent } from "geotic"
+import { findByComponent } from "../geotic"
 import _order from "./order.json"
 
 /**
