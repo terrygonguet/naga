@@ -1,3 +1,4 @@
+// @flow
 import "./style.css"
 import Game from "./lib/game"
 import Renderer from "./lib/renderer"
@@ -7,8 +8,6 @@ let old = 0
 let game = new Game()
 let renderer = new Renderer({
 	el: "#screen",
-	width: game.width,
-	height: game.height,
 })
 
 requestAnimationFrame(function raf(time) {
