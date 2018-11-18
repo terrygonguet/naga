@@ -5,7 +5,7 @@
 	"private": true,
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "webpack --config webpack.prod.js",
+		"build": "webpack -p --config webpack.prod.js",
 		"dev": "webpack-dev-server --open --config webpack.dev.js"
 	},
 	"repository": {
@@ -53,6 +53,7 @@
 		"@babel/plugin-proposal-optional-chaining": "^7.0.0",
 		"@babel/preset-env": "^7.1.5",
 		"babel-loader": "^8.0.4",
+		"babel-minify-webpack-plugin": "^0.3.1",
 		"clean-webpack-plugin": "^0.1.19",
 		"compression-webpack-plugin": "^2.0.0",
 		"css-loader": "^1.0.0",
@@ -75,6 +76,7 @@
 		"webpack-bundle-analyzer": "^3.0.3",
 		"webpack-cli": "^3.1.2",
 		"webpack-dev-server": "^3.1.9",
-		"webpack-merge": "^4.1.4"
+		"webpack-merge": "^4.1.4",
+		"webpack-sources": "^1.0.1"
 	}
 }
