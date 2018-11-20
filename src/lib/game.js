@@ -3,6 +3,8 @@ import { entity, component, findByComponent, findById } from "geotic"
 import { createDungeon } from "./dungeon"
 import { make_i2xy, make_cmpPos, byPosition } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
+import { make as makeSlime } from "./prefabs/slime"
+import { make as makeWizard } from "./prefabs/wizard"
 
 /* good seeds :
 "0.37a6adc41497a"
@@ -70,7 +72,19 @@ export default class Game {
 				i--
 				continue
 			}
-			this.make_enemy(pos)
+
+			this.rng() > 0.2
+				? makeSlime({
+						position: pos,
+						isRed: this.rng() < 0.5,
+						flipAnim: this.rng() < 0.5,
+						flipV: this.rng() < 0.5,
+				  })
+				: makeWizard({
+						position: pos,
+						flipAnim: this.rng() < 0.5,
+						flipV: this.rng() < 0.5,
+				  })
 		}
 
 		if (process.env.NODE_ENV === "development") entity().add("perf")
@@ -79,24 +93,6 @@ export default class Game {
 		this.tick()
 
 		console.log(this, findByComponent, findById)
-	}
-
-	make_enemy({ x, y }) {
-		let isRed = this.rng() < 0.5
-		entity()
-			.add("position", { x, y })
-			.add("sprite", { type: blocks.enemy[isRed ? "red" : "green"] })
-			.add("animation", {
-				// swap animation sometimes
-				frames: animations[isRed ? "enemyRed" : "enemyGreen"]
-					.slice()
-					.sort(f => (this.rng() < 0.5 ? -1 : 1)),
-				flipV: this.rng() > 0.5,
-			})
-			.add("hitbox", { canBeKilled: true })
-			.add("speed", { speed: 2 })
-			.add("ai", { chancetoMove: 0.3 }) // if only it was this simple
-			.tag("enemy")
 	}
 
 	initECS() {

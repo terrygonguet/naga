@@ -1,4 +1,3 @@
-// @flow
 import "./style.css"
 import Game from "./lib/game"
 import Renderer from "./lib/renderer"

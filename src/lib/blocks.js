@@ -20,6 +20,8 @@ export const blocks = {
 		redLow: "red-2",
 		green: "green-1",
 		greenLow: "green-2",
+		female: "female-1",
+		femaleLow: "female-2",
 	},
 }
 
@@ -50,5 +52,6 @@ export const doorAndWalls = [...walls, blocks.door]
 
 export const animations = {
 	enemyRed: [[blocks.enemy.red, 8], [blocks.enemy.redLow, 8]],
-	enemyGreen: [[blocks.enemy.greenLow, 8], [blocks.enemy.green, 8]],
+	enemyGreen: [[blocks.enemy.green, 8], [blocks.enemy.greenLow, 8]],
+	female: [[blocks.enemy.female, 9], [blocks.enemy.femaleLow, 7]],
 }
