@@ -1,10 +1,13 @@
 import seedrandom from "seedrandom"
 import { entity, component, findByComponent, findById } from "geotic"
 import { createDungeon } from "./dungeon"
-import { make_i2xy, make_cmpPos, byPosition } from "./tools"
+import { make_i2xy, byPosition } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
+
 import { make as makeSlime } from "./prefabs/slime"
 import { make as makeWizard } from "./prefabs/wizard"
+import { make as makeSnake } from "./prefabs/snake"
+import { make as makeBlock } from "./prefabs/block"
 
 /* good seeds :
 "0.37a6adc41497a"
@@ -36,23 +39,13 @@ export default class Game {
 		this.background.forEach(
 			(c, i) =>
 				c !== blocks.ground &&
-				entity()
-					.add("position", [i % this.width, Math.floor(i / this.width)])
-					.add("sprite", {
-						type: c,
-						isBackground: true,
-					})
-					.add("hitbox", {
-						blocksSight: doorAndWalls.includes(c),
-						blocksMoving: walls.includes(c),
-					})
-					.tag("background")
+				makeBlock({
+					position: [i % this.width, Math.floor(i / this.width)],
+					type: c,
+				})
 		)
 
-		entity()
-			.add("snake")
-			.add("controller")
-			.add("speed", { speed: 4 })
+		makeSnake()
 
 		entity().add("fogOfWar", {
 			width: this.width,

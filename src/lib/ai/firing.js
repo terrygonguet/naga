@@ -17,6 +17,7 @@ export function update({ entity, closestSnake, game, machine }) {
 	} = entity.ai
 	let pos = entity.position
 
+	entity.animation.flipV = closestSnake.position.subtract(pos).e(1) < 0
 	if (closestSnake.position.distanceFrom(pos) <= tooCloseRange) {
 		state = machine.transition(state, "PLAYER_CLOSE").value
 	} else if (

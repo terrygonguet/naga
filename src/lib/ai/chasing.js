@@ -17,7 +17,7 @@ export function update({ entity, closestSnake, game, machine }) {
 	} = entity.ai
 	let pos = entity.position
 	// TODO : pathfinding
-	// TODO : flip sprite to look at player
+	entity.animation.flipV = closestSnake.position.subtract(pos).e(1) < 0
 	if (
 		closestSnake.position.distanceFrom(pos) > sightRange ||
 		!canSee(pos, closestSnake.position)
