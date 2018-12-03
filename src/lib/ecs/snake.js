@@ -40,7 +40,7 @@ export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
 				snake.body.forEach(b => (findById(b).hitbox.blocksMoving = false))
 				if (!snake.invulnerable) {
 					if (--snake.length < 2) e.destroy()
-					else snake.invulnerable = 10
+					else snake.invulnerable = 9
 				}
 			})
 		},
@@ -108,7 +108,8 @@ export function update(game) {
 	}
 
 	if (snake.invulnerable) {
-		let addOrRemove = --snake.invulnerable % 2 ? addModifier : removeModifier
+		let addOrRemove = --snake.invulnerable % 2 ? removeModifier : addModifier
+		if (snake.invulnerable === 0) addOrRemove = removeModifier
 		snake.body.forEach(b => addOrRemove(findById(b), modifiers.highlight))
 		if (snake.invulnerable === 0)
 			snake.body.forEach(b => (findById(b).hitbox.blocksMoving = true))
