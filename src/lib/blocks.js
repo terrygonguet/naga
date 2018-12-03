@@ -23,6 +23,17 @@ export const blocks = {
 		female: "female-1",
 		femaleLow: "female-2",
 	},
+
+	magic: {
+		s1: "sprite57",
+		s2: "sprite58",
+		s3: "sprite59",
+		s4: "sprite60",
+		s5: "sprite61",
+		s6: "sprite62",
+		s7: "sprite63",
+		s8: "sprite64",
+	},
 }
 
 export const modifiers = {
@@ -54,4 +65,14 @@ export const animations = {
 	enemyRed: [[blocks.enemy.red, 8], [blocks.enemy.redLow, 8]],
 	enemyGreen: [[blocks.enemy.green, 8], [blocks.enemy.greenLow, 8]],
 	female: [[blocks.enemy.female, 9], [blocks.enemy.femaleLow, 7]],
+	magic: [
+		[blocks.magic.s1, 2],
+		[blocks.magic.s2, 2],
+		[blocks.magic.s3, 2],
+		[blocks.magic.s4, 2],
+		[blocks.magic.s5, 2],
+		[blocks.magic.s6, 2],
+		[blocks.magic.s7, 2],
+		[blocks.magic.s8, 2],
+	],
 }

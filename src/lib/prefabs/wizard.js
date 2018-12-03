@@ -16,7 +16,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 				chanceToMove: 0.3,
 				sightRange: 15,
 				tooCloseRange: 5,
-				fireRate: 0.2,
+				fireRate: 0.3,
 			},
 			machine: {
 				id: "ai",
