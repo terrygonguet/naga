@@ -24,7 +24,7 @@ export function update(game) {
 
 	findByComponent("sprite").forEach(ent => {
 		if (!ent.position) return
-		let { x, y } = ent.position
+		let [x, y] = ent.position.elements
 		;(ent.sprite.isBackground ? game.background : game.foreground)[
 			xy2i(x, y)
 		] = (ent.sprite.type + " " + ent.sprite.modifiers.join(" ")).trim() // lol

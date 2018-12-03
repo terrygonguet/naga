@@ -1,5 +1,7 @@
 import { findByComponent } from "geotic"
 import { dirname } from "path"
+import { Vector } from "sylvester-es6/target/Vector"
+import line from "bresenham-line"
 
 /**
  * Makes a function that translates x y pos to linear array index
@@ -39,53 +41,52 @@ export function make_isInBounds({ width, height }) {
 
 /**
  * Makes a function that compares a position with the first position
- * @param {Object} pt1
- * @param {Number} pt1.x1
- * @param {Number} pt1.y1
+ * @param {Array} pt1
  * @returns {Function}
  */
-export function make_cmpPos({ x: x1, y: y1 }) {
-	return function({ x: x2, y: y2 }) {
-		return x1 === x2 && y1 === y2
+export function make_cmpPos(pt1) {
+	return function(pt2) {
+		return new Vector(pt1).eql(pt2)
 	}
-}
-
-/**
- * Compare two points and returns true if they are the same
- * @param {Object} pt1
- * @param {Number} pt1.x
- * @param {Number} pt1.y
- * @param {Object} pt2
- * @param {Number} pt2.x
- * @param {Number} pt2.y
- */
-export function cmpPts({ x: x1, y: y1 }, { x: x2, y: y2 }) {
-	return x1 === x2 && y1 === y2
 }
 
 /**
  * Used to filter an array of entities by position
- * @param {Object} point
- * @param {Number} point.x
- * @param {Number} point.y
+ * @param {Object} pos
  */
-export function byPosition({ x, y }) {
+export function byPosition(pos) {
 	return function(entity) {
-		return cmpPts(entity?.position, { x, y })
+		return entity?.position.eql(pos)
+	}
+}
+
+// TODO : fade out
+/**
+ * Makes a function that returns the distance of the second point with the first
+ * @param {Array} pt1
+ * @returns {Function}
+ */
+export function make_distanceFrom(pt1) {
+	return function(pt2) {
+		return new Vector(pt1).distanceFrom(pt2)
 	}
 }
 
 /**
- * Makes a function that returns the distance of the second point with the first
- * @param {Object} pt1
- * @param {Number} pt1.x1
- * @param {Number} pt1.y1
- * @returns {Function}
+ * Converts vector pos to xy object
+ * @param {Object} vect Vector or array
  */
-export function make_distanceTo({ x: x1, y: y1 }) {
-	return function({ x: x2, y: y2 }) {
-		return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-	}
+export function vectToxy(vect) {
+	let [x, y] = vect.elements || vect
+	return { x, y }
+}
+
+/**
+ * Converts xy pos to vector
+ * @param {Object} vect Vector or array
+ */
+export function xyToVect({ x, y }) {
+	return new Vector([x, y])
 }
 
 /**
@@ -94,4 +95,21 @@ export function make_distanceTo({ x: x1, y: y1 }) {
  */
 export function findByCanTick(component) {
 	return findByComponent(component).filter(c => c?.speed.canTick || !c.speed)
+}
+
+/**
+ * Checks if the two points have a line of sight between them
+ * @param {Vector} from
+ * @param {Vector} to
+ */
+export function canSee(from, to) {
+	let canSee = true
+	for (const point of line(vectToxy(from), vectToxy(to))) {
+		let { x, y } = point
+		canSee = !findByComponent("position")
+			.filter(byPosition([x, y]))
+			.some(e => e?.hitbox?.blocksSight)
+		if (!canSee) break
+	}
+	return canSee
 }

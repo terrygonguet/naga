@@ -1,5 +1,11 @@
 import { entity, findById, findByComponent } from "geotic"
-import { directions, turnLeft, turnRight, reverse } from "../directions"
+import {
+	directions,
+	turnLeft,
+	turnRight,
+	reverse,
+	vectors,
+} from "../directions"
 import { blocks, modifiers } from "../blocks"
 import {
 	findKey as _findKey,
@@ -76,8 +82,7 @@ export function update(game) {
 	}
 
 	let nextPos = getNextPos({ snake, direction })
-	let cmpPos = make_cmpPos(nextPos)
-	let entities = findByComponent("position").filter(e => cmpPos(e.position))
+	let entities = findByComponent("position").filter(byPosition(nextPos))
 
 	for (const ent of entities) {
 		if (ent?.hitbox?.canBeKilled) {
@@ -90,10 +95,11 @@ export function update(game) {
 	controller.direction = direction
 
 	let oldHead = findById(snake.head)
-	// // when the block becomes body it becomes snake
+	// when the block becomes body it becomes snake
 	oldHead.sprite.type = blocks.snake
 
-	let head = make_head({ ...nextPos, direction, snakeId: snakeEntity.id })
+	let [x, y] = nextPos.elements
+	let head = make_head({ x, y, direction, snakeId: snakeEntity.id })
 	snake.head = head.id
 	snake.body.push(head.id)
 	// we can remove more than on segment per tick if we get hit
@@ -120,7 +126,7 @@ export function update(game) {
  */
 function make_head({ x, y, direction, snakeId }) {
 	return entity()
-		.add("position", { x, y })
+		.add("position", [x, y])
 		.add("fov")
 		.add("hitbox", { blocksMoving: true })
 		.add("sprite", {
@@ -143,24 +149,7 @@ function make_head({ x, y, direction, snakeId }) {
  * @returns {Object} { x, y }
  */
 function getNextPos({ snake, direction }) {
-	let nextPos = { ...findById(snake.head).position }
-
-	switch (direction) {
-		case directions.up:
-			nextPos.y--
-			break
-		case directions.down:
-			nextPos.y++
-			break
-		case directions.left:
-			nextPos.x--
-			break
-		case directions.right:
-			nextPos.x++
-			break
-	}
-
-	return nextPos
+	return findById(snake.head).position.add(vectors[direction])
 }
 
 /**

@@ -1,4 +1,4 @@
-import { make_distanceTo, cmpPts, byPosition } from "../tools"
+import { byPosition, canSee } from "../tools"
 import { findByComponent, findById } from "geotic"
 
 /**
@@ -15,16 +15,21 @@ export function update({ entity, closestSnake, game, machine }) {
 		state,
 	} = entity.ai
 	let pos = entity.position
-	let distanceTo = make_distanceTo(pos)
 
-	if (distanceTo(closestSnake.position) > tooCloseRange) {
+	if (
+		closestSnake.position.distanceFrom(pos) > tooCloseRange ||
+		!canSee(pos, closestSnake.position)
+	) {
 		state = machine.transition(state, "PLAYER_FAR").value
 	} else {
-		let dx = closestSnake.position.x - pos.x,
-			dy = closestSnake.position.y - pos.y
-		let moveTo = { ...pos }
-		if (Math.abs(dx) > Math.abs(dy)) moveTo.x -= Math.sign(dx) ** (!dx ? 0 : 1)
-		else moveTo.y -= Math.sign(dy) ** (!dy ? 0 : 1)
+		let d = closestSnake.position.subtract(pos),
+			dx = d.e(1),
+			dy = d.e(2)
+		let moveTo = pos.dup()
+		// TODO: Clearer
+		if (Math.abs(dx) > Math.abs(dy))
+			moveTo = moveTo.subtract([Math.sign(dx) ** (!dx ? 0 : 1), 0])
+		else moveTo = moveTo.subtract([0, Math.sign(dy) ** (!dy ? 0 : 1)])
 
 		// we check if the way is clear and move
 		let canMove = !findByComponent("position")

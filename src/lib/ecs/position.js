@@ -1,14 +1,13 @@
 import _order from "./order.json"
+import { Vector } from "sylvester-es6/target/Vector"
 
 /**
  * Keeps track of the position
  * @param {Entity} e The entity to attach the component to
- * @param {Object} params
- * @param {Number} [params.x]
- * @param {Number} [params.y]
+ * @param {Number[]} elements The coordinates
  */
-export function position(e, { x = 0, y = 0 } = {}) {
-	return { x, y }
+export function position(e, elements) {
+	return new Vector(elements)
 }
 
 export function update(game) {}

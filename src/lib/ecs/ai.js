@@ -1,5 +1,5 @@
 import { findByTag } from "geotic"
-import { make_distanceTo, findByCanTick } from "../tools"
+import { findByCanTick } from "../tools"
 import _order from "./order.json"
 import { Machine } from "xstate"
 import { update as updateIdle } from "../ai/idle"
@@ -15,7 +15,7 @@ for (const path of context.keys()) {
 }
 
 /**
- * Move around randomly for now
+ * Add AI functionality defined by the state machine and update functions
  * @param {Entity} e The entity to attach the component to
  * @param {Object} params
  * @param {Object} params.machine
@@ -35,9 +35,8 @@ export function update(game) {
 
 		let { state, machine } = ent.ai
 		let pos = ent.position
-		let distanceTo = make_distanceTo(pos)
-		let closestSnake = findByTag("snake").sort((a, b) =>
-			distanceTo(a.position) < distanceTo(b.position) ? -1 : 1
+		let closestSnake = findByTag("snake").sort(
+			(a, b) => pos.distanceFrom(a.position) - pos.distanceFrom(b.position)
 		)[0]
 		if (!closestSnake) return // whatever
 		let aimachine = Machine(machine)

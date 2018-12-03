@@ -38,7 +38,7 @@ export function update(game) {
 	let entities = findByComponent("position")
 
 	findByComponent("fov").forEach(ent => {
-		let { x, y } = ent.position
+		let [x, y] = ent.position.elements
 		let queue = threeByThree({ x, y })
 
 		while (queue.length) {
@@ -51,7 +51,7 @@ export function update(game) {
 				fogOfWar[xy2i(x, y)] = 0
 				// get stopped i.e. by walls and doors
 				let blocksSight = entities
-					.filter(byPosition({ x, y }))
+					.filter(byPosition([x, y]))
 					.some(e => e?.hitbox?.blocksSight)
 				if (!blocksSight) queue.push(...threeByThree({ x, y }))
 			}

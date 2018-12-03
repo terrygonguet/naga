@@ -19,7 +19,7 @@ export function make({
 		.add("speed", { speed: 2 })
 		.add("ai", {
 			data: {
-				chancetoMove: 0.3,
+				chanceToMove: 0.3,
 				sightRange: 15,
 			},
 			machine: {

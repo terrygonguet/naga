@@ -1,5 +1,6 @@
-import { make_distanceTo, cmpPts, byPosition } from "../tools"
-import { findByComponent, findById } from "geotic"
+import { canSee } from "../tools"
+import { findByComponent } from "geotic"
+import { make } from "../prefabs/magicMissile"
 
 /**
  * state update function for "chasing"
@@ -15,16 +16,17 @@ export function update({ entity, closestSnake, game, machine }) {
 		state,
 	} = entity.ai
 	let pos = entity.position
-	let distanceTo = make_distanceTo(pos)
 
-	if (distanceTo(closestSnake.position) <= tooCloseRange) {
+	if (closestSnake.position.distanceFrom(pos) <= tooCloseRange) {
 		state = machine.transition(state, "PLAYER_CLOSE").value
-	} else if (distanceTo(closestSnake.position) > sightRange) {
+	} else if (
+		closestSnake.position.distanceFrom(pos) > sightRange ||
+		!canSee(pos, closestSnake.position)
+	) {
 		state = machine.transition(state, "LOSE_SIGHT").value
-	} else if (game.time % fireRate < 1) {
-		// we shoot
-		let snake = findByComponent("snake")[0]
-		snake.emit("hit", entity.id)
+	} else if (game.time % (20 / fireRate) < 0.0001) {
+		let direction = closestSnake.position.subtract(pos)
+		make({ position: pos, direction, speed: 5 })
 	}
 	return state
 }

@@ -5,6 +5,7 @@
 	"perf": 1,
 	"hitbox": 1,
 	"snake": 10,
+	"projectile": 11,
 	"ai": 20,
 	"animation": 50,
 	"sprite": 51,

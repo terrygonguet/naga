@@ -18,7 +18,7 @@ export function update(game) {
 		if (speed.startTick === null) {
 			speed.startTick = game.time
 		}
-		speed.canTick = (game.time - speed.startTick) % speed.ticksEvery < 1
+		speed.canTick = (game.time - speed.startTick) % speed.ticksEvery < 0.0001
 	})
 }
 

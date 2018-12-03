@@ -1,3 +1,6 @@
+import { findKey as _findKey } from "lodash"
+import { Vector } from "sylvester-es6/target/Vector"
+
 /**
  * The key codes associated with the 4 directions
  */
@@ -7,6 +10,25 @@ export let directions = {
 	down: "ArrowDown",
 	right: "ArrowRight",
 }
+
+// black magic
+/**
+ * The direction vectors for each of the key codes
+ * e.g.: vectors["ArrowUp"] == Vector([0, -1])
+ */
+export const vectors = new Proxy(
+	{
+		up: new Vector([0, -1]),
+		left: new Vector([-1, 0]),
+		down: new Vector([0, 1]),
+		right: new Vector([1, 0]),
+	},
+	{
+		get(t, prop) {
+			return t[_findKey(directions, key => key === prop)]
+		},
+	}
+)
 
 /**
  * Changes the mapped direction key codes

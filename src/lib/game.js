@@ -11,7 +11,7 @@ import { make as makeWizard } from "./prefabs/wizard"
 */
 
 export default class Game {
-	seed = Math.random().toString(16)
+	seed = Date.now().toString(36)
 	rng = seedrandom(this.seed)
 
 	background = createDungeon({
@@ -37,10 +37,7 @@ export default class Game {
 			(c, i) =>
 				c !== blocks.ground &&
 				entity()
-					.add("position", {
-						x: i % this.width,
-						y: Math.floor(i / this.width),
-					})
+					.add("position", [i % this.width, Math.floor(i / this.width)])
 					.add("sprite", {
 						type: c,
 						isBackground: true,
@@ -66,8 +63,9 @@ export default class Game {
 		let max = 20 + Math.round(this.rng() * 10)
 		let i2xy = make_i2xy(this.width)
 		for (let i = 0; i < max; i++) {
-			let pos = i2xy(Math.floor(this.rng() * this.foreground.length))
-			let cell = findByComponent("position").find(byPosition(pos))
+			let { x, y } = i2xy(Math.floor(this.rng() * this.foreground.length))
+			let position = [x, y]
+			let cell = findByComponent("position").find(byPosition(position))
 			if (cell) {
 				i--
 				continue
@@ -75,13 +73,13 @@ export default class Game {
 
 			this.rng() > 0.2
 				? makeSlime({
-						position: pos,
+						position,
 						isRed: this.rng() < 0.5,
 						flipAnim: this.rng() < 0.5,
 						flipV: this.rng() < 0.5,
 				  })
 				: makeWizard({
-						position: pos,
+						position,
 						flipAnim: this.rng() < 0.5,
 						flipV: this.rng() < 0.5,
 				  })

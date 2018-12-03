@@ -13,10 +13,10 @@ export function make({ position, flipAnim = false, flipV = false }) {
 		.add("speed", { speed: 2 })
 		.add("ai", {
 			data: {
-				chancetoMove: 0.3,
+				chanceToMove: 0.3,
 				sightRange: 15,
 				tooCloseRange: 5,
-				fireRate: 0.3,
+				fireRate: 0.2,
 			},
 			machine: {
 				id: "ai",
