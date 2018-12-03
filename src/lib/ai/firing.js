@@ -12,7 +12,7 @@ import { make } from "../prefabs/magicMissile"
  */
 export function update({ entity, closestSnake, game, machine }) {
 	let {
-		data: { sightRange, tooCloseRange, fireRate },
+		data: { sightRange, tooCloseRange, fireRate, lastFireTime },
 		state,
 	} = entity.ai
 	let pos = entity.position
@@ -24,7 +24,8 @@ export function update({ entity, closestSnake, game, machine }) {
 		!canSee(pos, closestSnake.position)
 	) {
 		state = machine.transition(state, "LOSE_SIGHT").value
-	} else if (game.time % (20 / fireRate) < 0.0001) {
+	} else if (!lastFireTime || game.time - lastFireTime > 20 / fireRate) {
+		entity.ai.data.lastFireTime = game.time
 		let direction = closestSnake.position.subtract(pos)
 		make({ position: pos, direction, speed: 5 })
 	}
