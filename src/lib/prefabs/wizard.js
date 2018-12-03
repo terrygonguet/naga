@@ -1,13 +1,15 @@
-import { entity } from "geotic"
+import { entity, findByComponent } from "geotic"
 import { blocks, animations } from "../blocks"
+import { Vector } from "sylvester-es6/target/Vector"
+import { byPosition } from "../tools"
 
 export function make({ position, flipAnim = false, flipV = false }) {
-	let frames = animations.female
+	let frames = animations.male
 	flipAnim && frames.reverse()
 
-	entity()
+	let e = entity()
 		.add("position", position)
-		.add("sprite", { type: blocks.enemy.female })
+		.add("sprite", { type: blocks.enemy.male })
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true })
 		.add("speed", { speed: 2 })
@@ -41,5 +43,23 @@ export function make({ position, flipAnim = false, flipV = false }) {
 				},
 			},
 		})
+		.on("hit", function teleport() {
+			let newPos
+			do {
+				newPos = e.position.add([
+					Math.round(Math.random() * 10) - 5,
+					Math.round(Math.random() * 10) - 5,
+				])
+			} while (
+				findByComponent("position")
+					.filter(byPosition(newPos))
+					.some(e => e.hitbox)
+			)
+			e.position = newPos
+			e.hitbox.givesLength = true
+			e.off("hit", teleport)
+			e.on("hit", () => e.destroy())
+		})
 		.tag("enemy")
+	return e
 }

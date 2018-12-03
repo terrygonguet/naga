@@ -1,19 +1,13 @@
 import { entity } from "geotic"
 import { blocks, animations } from "../blocks"
 
-export function make({
-	position,
-	isRed = true,
-	flipAnim = false,
-	flipV = false,
-}) {
-	let type = blocks.enemy[isRed ? "red" : "green"]
-	let frames = animations[isRed ? "enemyRed" : "enemyGreen"].slice() // copy
+export function make({ position, flipAnim = false, flipV = false }) {
+	let frames = animations.female
 	flipAnim && frames.reverse()
 
 	let e = entity()
 		.add("position", position)
-		.add("sprite", { type })
+		.add("sprite", { type: blocks.enemy.female })
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true, givesLength: true })
 		.add("speed", { speed: 2 })
@@ -21,6 +15,8 @@ export function make({
 			data: {
 				chanceToMove: 0.3,
 				sightRange: 15,
+				tooCloseRange: 5,
+				fireRate: 0.3,
 			},
 			machine: {
 				id: "ai",
@@ -28,12 +24,18 @@ export function make({
 				states: {
 					idle: {
 						on: {
-							SEE_PLAYER: "chasing",
+							SEE_PLAYER: "firing",
 						},
 					},
-					chasing: {
+					firing: {
 						on: {
 							LOSE_SIGHT: "idle",
+							PLAYER_CLOSE: "fleeing",
+						},
+					},
+					fleeing: {
+						on: {
+							PLAYER_FAR: "firing",
 						},
 					},
 				},

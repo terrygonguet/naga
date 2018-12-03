@@ -22,6 +22,8 @@ export const blocks = {
 		greenLow: "green-2",
 		female: "female-1",
 		femaleLow: "female-2",
+		male: "male-1",
+		maleLow: "male-2",
 	},
 
 	magic: {
@@ -65,6 +67,7 @@ export const animations = {
 	enemyRed: [[blocks.enemy.red, 8], [blocks.enemy.redLow, 8]],
 	enemyGreen: [[blocks.enemy.green, 8], [blocks.enemy.greenLow, 8]],
 	female: [[blocks.enemy.female, 9], [blocks.enemy.femaleLow, 7]],
+	male: [[blocks.enemy.male, 9], [blocks.enemy.maleLow, 7]],
 	magic: [
 		[blocks.magic.s1, 2],
 		[blocks.magic.s2, 2],

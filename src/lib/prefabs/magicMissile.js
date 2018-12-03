@@ -2,7 +2,7 @@ import { entity } from "geotic"
 import { blocks, animations } from "../blocks"
 
 export function make({ position, direction, speed }) {
-	entity()
+	return entity()
 		.add("position", position)
 		.add("sprite", { type: blocks.magic.s1 })
 		.add("animation", { frames: animations.magic })

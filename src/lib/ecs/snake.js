@@ -86,8 +86,8 @@ export function update(game) {
 
 	for (const ent of entities) {
 		if (ent?.hitbox?.canBeKilled) {
+			ent?.hitbox?.givesLength && snake.length++
 			ent.emit("hit", snakeEntity.id)
-			snake.length++
 		}
 	}
 

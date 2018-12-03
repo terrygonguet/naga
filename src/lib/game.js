@@ -5,6 +5,7 @@ import { make_i2xy, byPosition } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
 
 import { make as makeSlime } from "./prefabs/slime"
+import { make as makeAprentice } from "./prefabs/apprentice"
 import { make as makeWizard } from "./prefabs/wizard"
 import { make as makeSnake } from "./prefabs/snake"
 import { make as makeBlock } from "./prefabs/block"
@@ -64,18 +65,26 @@ export default class Game {
 				continue
 			}
 
-			this.rng() > 0.2
-				? makeSlime({
-						position,
-						isRed: this.rng() < 0.5,
-						flipAnim: this.rng() < 0.5,
-						flipV: this.rng() < 0.5,
-				  })
-				: makeWizard({
-						position,
-						flipAnim: this.rng() < 0.5,
-						flipV: this.rng() < 0.5,
-				  })
+			let r = this.rng()
+			if (r < 0.1)
+				makeWizard({
+					position,
+					flipAnim: this.rng() < 0.5,
+					flipV: this.rng() < 0.5,
+				})
+			else if (r < 0.2)
+				makeAprentice({
+					position,
+					flipAnim: this.rng() < 0.5,
+					flipV: this.rng() < 0.5,
+				})
+			else
+				makeSlime({
+					position,
+					isRed: this.rng() < 0.5,
+					flipAnim: this.rng() < 0.5,
+					flipV: this.rng() < 0.5,
+				})
 		}
 
 		if (process.env.NODE_ENV === "development") entity().add("perf")

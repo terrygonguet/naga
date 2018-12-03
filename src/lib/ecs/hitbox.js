@@ -7,15 +7,18 @@ import _order from "./order.json"
  * @param {Boolean} [params.blocksSight] if the entity blocks fov
  * @param {Boolean} [params.blocksMoving] if the entity blocks movement
  * @param {Boolean} [params.canBeKilled] if the entity can be killed by the player
+ * @param {Boolean} [params.givesLength] if the entity gives the player more length when they eat it
  */
 export function hitbox(
 	e,
-	{ blocksSight = false, blocksMoving = false, canBeKilled = false } = {}
+	{
+		blocksSight = false,
+		blocksMoving = false,
+		canBeKilled = false,
+		givesLength = false,
+	} = {}
 ) {
-	if (canBeKilled) {
-		e.on("hit", id => e.destroy())
-	}
-	return { blocksMoving, blocksSight, canBeKilled }
+	return { blocksMoving, blocksSight, canBeKilled, givesLength }
 }
 
 export function update(game) {}
