@@ -7,6 +7,7 @@ import { blocks, animations, walls, doorAndWalls } from "./blocks"
 import { make as makeSlime } from "./prefabs/slime"
 import { make as makeAprentice } from "./prefabs/apprentice"
 import { make as makeWizard } from "./prefabs/wizard"
+import { make as makeKnight } from "./prefabs/knight"
 import { make as makeSnake } from "./prefabs/snake"
 import { make as makeBlock } from "./prefabs/block"
 
@@ -74,6 +75,12 @@ export default class Game {
 				})
 			else if (r < 0.2)
 				makeAprentice({
+					position,
+					flipAnim: this.rng() < 0.5,
+					flipV: this.rng() < 0.5,
+				})
+			else if (r < 0.4)
+				makeKnight({
 					position,
 					flipAnim: this.rng() < 0.5,
 					flipV: this.rng() < 0.5,

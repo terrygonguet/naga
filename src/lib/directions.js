@@ -14,7 +14,7 @@ export let directions = {
 // black magic
 /**
  * The direction vectors for each of the key codes
- * e.g.: vectors["ArrowUp"] == Vector([0, -1])
+ * e.g.: vectors[directions.up] == Vector([0, -1])
  */
 export const vectors = new Proxy(
 	{

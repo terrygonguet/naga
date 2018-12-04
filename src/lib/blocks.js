@@ -24,6 +24,10 @@ export const blocks = {
 		femaleLow: "female-2",
 		male: "male-1",
 		maleLow: "male-2",
+		bear: "bear-1",
+		bearLow: "bear-2",
+		knight: "knight-1",
+		knightLow: "knight-2",
 	},
 
 	magic: {
@@ -68,6 +72,8 @@ export const animations = {
 	enemyGreen: [[blocks.enemy.green, 8], [blocks.enemy.greenLow, 8]],
 	female: [[blocks.enemy.female, 9], [blocks.enemy.femaleLow, 7]],
 	male: [[blocks.enemy.male, 9], [blocks.enemy.maleLow, 7]],
+	bear: [[blocks.enemy.bear, 9], [blocks.enemy.bearLow, 7]],
+	knight: [[blocks.enemy.knight, 9], [blocks.enemy.knightLow, 7]],
 	magic: [
 		[blocks.magic.s1, 2],
 		[blocks.magic.s2, 2],

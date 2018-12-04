@@ -4,12 +4,12 @@ import { Vector } from "sylvester-es6/target/Vector"
 import { byPosition } from "../tools"
 
 export function make({ position, flipAnim = false, flipV = false }) {
-	let frames = animations.male
+	let frames = animations.bear
 	flipAnim && frames.reverse()
 
 	let e = entity()
 		.add("position", position)
-		.add("sprite", { type: blocks.enemy.male })
+		.add("sprite", { type: blocks.enemy.bear })
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true })
 		.add("speed", { speed: 2 })

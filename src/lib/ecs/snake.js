@@ -30,18 +30,27 @@ export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
 		head: null,
 		body: [],
 		lastDirection: null,
-		invulnerable: 0,
+		invincible: false,
 		mount() {
 			let head = make_head({ x, y, direction: "right", snakeId: e.id })
 			e.snake.head = head.id
 			e.snake.body.push(head.id)
 			e.on("hit", id => {
 				let snake = e.snake
-				snake.body.forEach(b => (findById(b).hitbox.blocksMoving = false))
-				if (!snake.invulnerable) {
-					if (--snake.length < 2) e.destroy()
-					else snake.invulnerable = 9
-				}
+				if (e.has("invincible")) return
+				e.add("invincible", 35).once("invincible-end", () => {
+					snake.body.forEach(b => {
+						findById(b).hitbox.blocksMoving = false
+					})
+				})
+
+				snake.body.forEach(b => {
+					let bodyPart = findById(b)
+					bodyPart.hitbox.blocksMoving = false
+					bodyPart.add("invincible", 35)
+				})
+
+				if (--snake.length < 2) e.destroy()
 			})
 		},
 		unmount() {
@@ -106,14 +115,6 @@ export function update(game) {
 	while (snake.body.length > snake.length) {
 		findById(snake.body.shift()).destroy()
 	}
-
-	if (snake.invulnerable) {
-		let addOrRemove = --snake.invulnerable % 2 ? removeModifier : addModifier
-		if (snake.invulnerable === 0) addOrRemove = removeModifier
-		snake.body.forEach(b => addOrRemove(findById(b), modifiers.highlight))
-		if (snake.invulnerable === 0)
-			snake.body.forEach(b => (findById(b).hitbox.blocksMoving = true))
-	}
 }
 
 /**
@@ -126,7 +127,8 @@ export function update(game) {
  * @returns {Entity}
  */
 function make_head({ x, y, direction, snakeId }) {
-	return entity()
+	let snakeEnt = findById(snakeId)
+	let e = entity()
 		.add("position", [x, y])
 		.add("fov")
 		.add("hitbox", { blocksMoving: true })
@@ -136,9 +138,15 @@ function make_head({ x, y, direction, snakeId }) {
 			modifiers: [_findKey(directions, d => d === direction) || "right"],
 		})
 		.on("hit", id => {
-			findById(snakeId).emit("hit", id)
+			snakeEnt.emit("hit", id)
 		})
 		.tag("snake", { id: snakeId })
+
+	if (snakeEnt.has("invincible")) {
+		e.hitbox.blocksMoving = false
+		e.add("invincible", snakeEnt.invincible.remaining)
+	}
+	return e
 }
 
 /**

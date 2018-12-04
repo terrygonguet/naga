@@ -24,7 +24,6 @@ export function update(game) {
 				.filter(byPosition(e.position))
 				.find(ent => ent?.hitbox?.blocksMoving)
 			blockingEnt?.emit("hit", e.id) && e.destroy()
-			console.log(blockingEnt)
 		} else {
 			e.destroy()
 		}
