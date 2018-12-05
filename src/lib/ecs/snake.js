@@ -30,7 +30,6 @@ export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
 		head: null,
 		body: [],
 		lastDirection: null,
-		invincible: false,
 		mount() {
 			let head = make_head({ x, y, direction: "right", snakeId: e.id })
 			e.snake.head = head.id
@@ -87,7 +86,7 @@ export function update(game) {
 			reverse(direction),
 		].find(dir => canMove[dir])
 		// Now we're really stuck
-		if (!direction) snakeEntity.destroy()
+		if (!direction) return snakeEntity.destroy()
 	}
 
 	let nextPos = getNextPos({ snake, direction })
