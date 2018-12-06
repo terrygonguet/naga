@@ -10,7 +10,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 
 	let e = entity()
 		.add("position", position)
-		.add("sprite", { type: blocks.enemy.knight })
+		.add("sprite", { texture: blocks.enemy.knight })
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true })
 		.add("speed", { speed: 2 })
@@ -52,7 +52,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 				e.ai.state = machine.transition(e.ai.state, "RECOVER").value
 				e.on("hit", () => e.destroy())
 			})
-			e.sprite.type = blocks.enemy.male
+			e.sprite.texture = blocks.enemy.male
 			e.animation.frames = animations.male
 			e.hitbox.blocksMoving = true
 			e.ai.state = machine.transition(e.ai.state, "HIT").value

@@ -30,9 +30,10 @@ function threeByThree({ x, y }) {
 }
 
 export function update(game) {
-	let fogOfWar = findByComponent("fogOfWar")[0]?.fogOfWar.grid
+	let fogOfWar = findByComponent("fogOfWar")[0].fogOfWar
 	if (!fogOfWar) return
 
+	let grid = fogOfWar.grid
 	let xy2i = make_xy2i(game.width)
 	let isInBounds = make_isInBounds(game)
 	let entities = findByComponent("position")
@@ -45,10 +46,11 @@ export function update(game) {
 			let { x, y } = queue.shift()
 
 			// if we already uncovered this part we don't do anymore
-			if (!fogOfWar[xy2i(x, y)]) continue
+			if (!grid[xy2i(x, y)]) continue
 			else if (isInBounds(x, y)) {
 				// else we uncover it
-				fogOfWar[xy2i(x, y)] = 0
+				grid[xy2i(x, y)] = 0
+				fogOfWar.dirty = true
 				// get stopped i.e. by walls and doors
 				let blocksSight = entities
 					.filter(byPosition([x, y]))

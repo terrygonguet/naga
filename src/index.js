@@ -5,14 +5,14 @@ import Renderer from "./lib/renderer"
 let tps = 20
 let old = 0
 let game = new Game()
-let renderer = new Renderer({
-	el: "#screen",
-})
+// let renderer = new Renderer({
+// 	el: "#screen",
+// })
 
 requestAnimationFrame(function raf(time) {
 	if (time - old > 1000 / tps) {
 		game.tick()
-		renderer.setLayers(game)
+		// renderer.setLayers(game)
 		old = time
 	}
 	requestAnimationFrame(raf)

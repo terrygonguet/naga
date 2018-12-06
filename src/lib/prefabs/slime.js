@@ -7,13 +7,13 @@ export function make({
 	flipAnim = false,
 	flipV = false,
 }) {
-	let type = blocks.enemy[isRed ? "red" : "green"]
+	let texture = blocks.enemy[isRed ? "red" : "green"]
 	let frames = animations[isRed ? "enemyRed" : "enemyGreen"].slice() // copy
 	flipAnim && frames.reverse()
 
 	let e = entity()
 		.add("position", position)
-		.add("sprite", { type })
+		.add("sprite", { texture })
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true, givesLength: true })
 		.add("speed", { speed: 2 })

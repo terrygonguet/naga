@@ -1,8 +1,10 @@
 import seedrandom from "seedrandom"
-import { entity, component, findByComponent, findById } from "geotic"
+import { entity, component, findByComponent, findById, findByTag } from "geotic"
 import { createDungeon } from "./dungeon"
 import { make_i2xy, byPosition } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
+import spritesData from "../assets/micro_dungeon_tileset.json"
+import spritesImage from "../assets/micro_dungeon_tileset.png"
 
 import { make as makeSlime } from "./prefabs/slime"
 import { make as makeAprentice } from "./prefabs/apprentice"
@@ -10,6 +12,7 @@ import { make as makeWizard } from "./prefabs/wizard"
 import { make as makeKnight } from "./prefabs/knight"
 import { make as makeSnake } from "./prefabs/snake"
 import { make as makeBlock } from "./prefabs/block"
+import { Application, Texture, Spritesheet, Container } from "pixi.js"
 
 /* good seeds :
 "0.37a6adc41497a"
@@ -32,20 +35,48 @@ export default class Game {
 	height = this.background.height
 	foreground = Array(this.width * this.height).fill(null)
 
+	app = new Application({
+		view: document.querySelector("#screen"),
+		antialias: true,
+		width: innerWidth,
+		height: innerHeight,
+		autoStart: false,
+	})
+	stage = this.app.stage
+	sheet = null
+	layers = {
+		background: new Container(),
+		entities: new Container(),
+		fogOfWar: new Container(),
+	}
+
 	systems = []
 	time = 0
 
 	constructor() {
 		this.initECS()
+		this.initDisplay()
+	}
 
-		this.background.forEach(
-			(c, i) =>
-				c !== blocks.ground &&
-				makeBlock({
-					position: [i % this.width, Math.floor(i / this.width)],
-					type: c,
-				})
+	ready() {
+		entity().tag("game", this) // global reference
+
+		this.background.forEach((c, i) =>
+			makeBlock({
+				position: [i % this.width, Math.floor(i / this.width)],
+				texture: c,
+			})
 		)
+
+		let { width, height } = this.layers.background
+		this.stage.position.set(
+			Math.round(innerWidth / 2 - width / 2),
+			Math.round(innerHeight / 2 - height / 2)
+		)
+		// TODO : find where to put that
+		setTimeout(() => {
+			this.layers.background.cacheAsBitmap = true
+		}, 1000)
 
 		makeSnake()
 
@@ -60,8 +91,10 @@ export default class Game {
 		for (let i = 0; i < max; i++) {
 			let { x, y } = i2xy(Math.floor(this.rng() * this.foreground.length))
 			let position = [x, y]
-			let cell = findByComponent("position").find(byPosition(position))
-			if (cell) {
+			let canSpawn = !findByComponent("position")
+				.filter(byPosition(position))
+				.some(e => e?.hitbox)
+			if (!canSpawn) {
 				i--
 				continue
 			}
@@ -94,12 +127,14 @@ export default class Game {
 				})
 		}
 
-		if (process.env.NODE_ENV === "development") entity().add("perf")
+		if (process.env.NODE_ENV === "development") {
+			entity().add("perf")
+			console.log(this)
+			console.log(findByComponent, findById, findByTag)
+		}
 
 		// first update
 		this.tick()
-
-		console.log(this, findByComponent, findById)
 	}
 
 	initECS() {
@@ -113,11 +148,29 @@ export default class Game {
 			this.systems.push(update)
 		}
 
-		this.systems.sort((a, b) => (a.order > b.order ? 1 : -1))
+		this.systems.sort((a, b) => a.order - b.order)
+	}
+
+	initDisplay() {
+		this.app.ticker.add(this.displayTick.bind(this))
+
+		let texture = Texture.fromImage(spritesImage)
+		this.sheet = new Spritesheet(texture.baseTexture, spritesData, spritesImage)
+		this.sheet.parse(() => {
+			this.app.start()
+			this.stage.addChild(this.layers.background)
+			this.stage.addChild(this.layers.entities)
+			this.stage.addChild(this.layers.fogOfWar)
+			// I don't know why but it needs that
+			this.layers.fogOfWar.setTransform(-8, -8)
+			this.ready()
+		})
 	}
 
 	tick() {
 		this.systems.forEach(s => s(this))
 		this.time++
 	}
+
+	displayTick(delta) {}
 }

@@ -104,7 +104,7 @@ export function update(game) {
 
 	let oldHead = findById(snake.head)
 	// when the block becomes body it becomes snake
-	oldHead.sprite.type = blocks.snake
+	oldHead.sprite.texture = blocks.snake
 
 	let [x, y] = nextPos.elements
 	let head = make_head({ x, y, direction, snakeId: snakeEntity.id })
@@ -132,8 +132,8 @@ function make_head({ x, y, direction, snakeId }) {
 		.add("fov")
 		.add("hitbox", { blocksMoving: true })
 		.add("sprite", {
-			type: blocks.snakeHead,
-			isBackground: false,
+			texture: blocks.snakeHead,
+			layer: "entities",
 			modifiers: [_findKey(directions, d => d === direction) || "right"],
 		})
 		.on("hit", id => {

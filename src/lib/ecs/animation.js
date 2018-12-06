@@ -37,8 +37,7 @@ export function animation(e, { frames, flipV = false, flipH = false } = {}) {
 		time: 1,
 		current: 0,
 		mount() {
-			if (!e.sprite) e.add("sprite")
-			e.sprite.type = frames[0][0]
+			if (!e.sprite) e.add("sprite", { texture: frames[0][0] })
 			e.animation.flipH = flipH
 			e.animation.flipV = flipV
 		},
@@ -57,7 +56,7 @@ export function update(game) {
 			// reset and go to next frame, wrap if necessary
 			animation.time = 1
 			animation.current = ++current % frames.length
-			ent.sprite.type = frames[animation.current][0]
+			ent.sprite.texture = frames[animation.current][0]
 		}
 	})
 }
