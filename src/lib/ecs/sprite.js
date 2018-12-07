@@ -2,7 +2,7 @@ import { blocks } from "../blocks"
 import { findByComponent, findByTag } from "geotic"
 import { make_xy2i } from "../tools"
 import _order from "./order.json"
-import { Sprite } from "pixi.js"
+import { Sprite, filters } from "pixi.js"
 import { Vector } from "sylvester-es6/target/Vector"
 
 /**
@@ -22,6 +22,7 @@ export function sprite(
 	let game = findByTag("game")[0].tags.game
 	let s = makeSprite(game.sheet.textures[texture])
 	s.position.set(...pos.x(s.width).elements)
+	modifiers.forEach(m => modifiersAdd[m]?.(s))
 
 	return {
 		get texture() {
@@ -42,8 +43,6 @@ export function sprite(
 }
 
 export function update(game) {
-	// clear fg & bg before re-drawing
-
 	findByComponent("sprite").forEach(ent => {
 		if (!ent.position) return
 		let pos = ent.position
@@ -65,6 +64,7 @@ export function addModifier(ent, modifier) {
 	let modifiers = ent.sprite.modifiers
 	if (modifiers.indexOf(modifier) !== -1) return ent
 	modifiers.push(modifier)
+	modifiersAdd[modifier]?.(ent.sprite.texture)
 	return ent
 }
 
@@ -79,6 +79,7 @@ export function removeModifier(ent, modifier) {
 	let i = modifiers.indexOf(modifier)
 	if (i === -1) return ent
 	modifiers.splice(i, 1)
+	modifiersRemove[modifier]?.(ent.sprite.texture)
 	return ent
 }
 
@@ -90,6 +91,63 @@ function makeSprite(texture) {
 	let s = new Sprite(texture)
 	s.pivot.set(s.width / 2, s.height / 2)
 	return s
+}
+
+let brightenFilter = new filters.ColorMatrixFilter()
+brightenFilter.brightness(1.5)
+
+const modifiersAdd = {
+	up(sprite) {
+		sprite.rotation = -Math.PI / 2
+		return sprite
+	},
+	down(sprite) {
+		sprite.rotation = Math.PI / 2
+		return sprite
+	},
+	left(sprite) {
+		sprite.rotation = Math.PI
+		return sprite
+	},
+	flipV(sprite) {
+		sprite.scale.x = -1
+		return sprite
+	},
+	flipH(sprite) {
+		sprite.scale.y = -1
+		return sprite
+	},
+	highlight(sprite) {
+		sprite.filters = (sprite.filters || []).concat([brightenFilter])
+		return sprite
+	},
+}
+
+const modifiersRemove = {
+	up(sprite) {
+		sprite.rotation = 0
+		return sprite
+	},
+	down(sprite) {
+		sprite.rotation = 0
+		return sprite
+	},
+	left(sprite) {
+		sprite.rotation = 0
+		return sprite
+	},
+	flipV(sprite) {
+		sprite.scale.x = 1
+		return sprite
+	},
+	flipH(sprite) {
+		sprite.scale.y = 1
+		return sprite
+	},
+	highlight(sprite) {
+		sprite.filters = (sprite.filters || []).filter(f => f !== brightenFilter)
+		return sprite
+	},
 }
 
 export { sprite as component }

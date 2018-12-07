@@ -3,8 +3,11 @@ import { entity, component, findByComponent, findById, findByTag } from "geotic"
 import { createDungeon } from "./dungeon"
 import { make_i2xy, byPosition } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
-import spritesData from "../assets/micro_dungeon_tileset.json"
+import { Application, Texture, Spritesheet, Container } from "pixi.js"
+import { Vector } from "sylvester-es6/target/Vector"
+
 import spritesImage from "../assets/micro_dungeon_tileset.png"
+import spritesData from "../assets/micro_dungeon_tileset.json"
 
 import { make as makeSlime } from "./prefabs/slime"
 import { make as makeAprentice } from "./prefabs/apprentice"
@@ -12,7 +15,6 @@ import { make as makeWizard } from "./prefabs/wizard"
 import { make as makeKnight } from "./prefabs/knight"
 import { make as makeSnake } from "./prefabs/snake"
 import { make as makeBlock } from "./prefabs/block"
-import { Application, Texture, Spritesheet, Container } from "pixi.js"
 
 /* good seeds :
 "0.37a6adc41497a"
@@ -25,8 +27,8 @@ export default class Game {
 	background = createDungeon({
 		roomWidth: 9,
 		roomHeight: 9,
-		nbRoomW: 6,
-		nbRoomH: 6,
+		nbRoomW: 12,
+		nbRoomH: 12,
 		rng: this.rng,
 	})
 
@@ -37,7 +39,6 @@ export default class Game {
 
 	app = new Application({
 		view: document.querySelector("#screen"),
-		antialias: true,
 		width: innerWidth,
 		height: innerHeight,
 		autoStart: false,
@@ -76,7 +77,7 @@ export default class Game {
 		// TODO : find where to put that
 		setTimeout(() => {
 			this.layers.background.cacheAsBitmap = true
-		}, 1000)
+		}, 2000)
 
 		makeSnake()
 
@@ -172,5 +173,20 @@ export default class Game {
 		this.time++
 	}
 
-	displayTick(delta) {}
+	displayTick(delta) {
+		let { x, y } = this.stage.position
+		let cur = new Vector([x, y])
+		let snakeHead = findById(findByComponent("snake")[0].snake.head)
+		let midScreen = new Vector([innerWidth / 2, innerHeight / 2])
+		let target = midScreen.subtract(snakeHead.position.x(16))
+		let distance = cur.distanceFrom(target)
+
+		if (distance > 200 || distance < delta) {
+			this.stage.position.set(...target.elements)
+		} else {
+			let direction = target.subtract(cur).toUnitVector()
+			cur = cur.add(direction.x(delta)).round()
+			this.stage.position.set(...cur.elements)
+		}
+	}
 }
