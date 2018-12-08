@@ -52,7 +52,6 @@ export default class Game {
 
 	ready() {
 		entity().tag("game", this) // global reference
-		console.log(vec2)
 
 		let dungeon = createDungeon({
 			roomWidth: 9,
@@ -134,6 +133,7 @@ export default class Game {
 		if (process.env.NODE_ENV === "development") {
 			entity().add("perf")
 			console.log(this)
+			console.log(vec2)
 			console.log(findByComponent, findById, findByTag)
 		}
 
