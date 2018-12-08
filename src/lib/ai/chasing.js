@@ -1,5 +1,6 @@
 import { byPosition, canSee } from "../tools"
 import { findByComponent, findById } from "geotic"
+import { vec2 } from "gl-matrix"
 
 /**
  * state update function for "chasing"
@@ -15,33 +16,34 @@ export function update({ entity, closestSnake, game, machine }) {
 		state,
 		target,
 	} = entity.ai
+
 	let pos = entity.position
 	// TODO : pathfinding
-	entity.animation.flipV = closestSnake.position.subtract(pos).e(1) < 0
+	entity.animation.flipV = closestSnake.position[0] - pos[0] < 0
 	if (
-		closestSnake.position.distanceFrom(pos) > sightRange ||
+		vec2.distance(closestSnake.position, pos) > sightRange ||
 		!canSee(pos, closestSnake.position)
 	) {
 		state = machine.transition(state, "LOSE_SIGHT").value
 	} else {
-		let d = closestSnake.position.subtract(pos),
-			dx = d.e(1),
-			dy = d.e(2)
-		let moveTo = pos.dup()
-		if (Math.abs(dx) > Math.abs(dy)) moveTo = moveTo.add([Math.sign(dx), 0])
-		else moveTo = moveTo.add([0, Math.sign(dy)])
+		let dx = closestSnake.position[0] - pos[0],
+			dy = closestSnake.position[1] - pos[1]
+		let moveTo = vec2.clone(pos)
+
+		if (Math.abs(dx) > Math.abs(dy)) moveTo[0] += Math.sign(dx)
+		else moveTo[1] += Math.sign(dy)
 
 		// if it's not the head and we can reach snake we attack
 		let isHead =
 			findById(closestSnake.tags.snake.id).snake.head === closestSnake.id
-		if (!isHead && moveTo.eql(closestSnake.position)) {
+		if (!isHead && vec2.equals(moveTo, closestSnake.position)) {
 			closestSnake.emit("hit", entity.id)
 		} else {
 			// we check if the way is clear and move
 			let canMove = !findByComponent("position")
 				.filter(byPosition(moveTo))
 				.some(e => e.hitbox)
-			if (canMove) entity.position = moveTo
+			if (canMove) vec2.copy(pos, moveTo)
 		}
 	}
 	return state

@@ -4,6 +4,7 @@ import _order from "./order.json"
 import { Machine } from "xstate"
 import { update as updateIdle } from "../ai/idle"
 import { update as updateChasing } from "../ai/chasing"
+import { vec2 } from "gl-matrix"
 
 // get the updates functions for the states
 const context = require.context("../ai", false, /\.js$/)
@@ -36,7 +37,7 @@ export function update(game) {
 		let { state, machine } = ent.ai
 		let pos = ent.position
 		let closestSnake = findByTag("snake").sort(
-			(a, b) => pos.distanceFrom(a.position) - pos.distanceFrom(b.position)
+			(a, b) => vec2.distance(pos, a.position) - vec2.distance(pos, b.position)
 		)[0]
 		if (!closestSnake) return // whatever
 		let aimachine = Machine(machine)

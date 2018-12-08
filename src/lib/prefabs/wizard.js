@@ -1,6 +1,6 @@
 import { entity, findByComponent } from "geotic"
 import { blocks, animations } from "../blocks"
-import { Vector } from "sylvester-es6/target/Vector"
+import { vec2 } from "gl-matrix"
 import { byPosition } from "../tools"
 
 export function make({ position, flipAnim = false, flipV = false }) {
@@ -43,10 +43,10 @@ export function make({ position, flipAnim = false, flipV = false }) {
 				},
 			},
 		})
-		.on("hit", function teleport() {
-			let newPos
+		.once("hit", function teleport() {
+			let newPos = vec2.create()
 			do {
-				newPos = e.position.add([
+				vec2.add(newPos, e.position, [
 					Math.round(Math.random() * 10) - 5,
 					Math.round(Math.random() * 10) - 5,
 				])
@@ -55,9 +55,8 @@ export function make({ position, flipAnim = false, flipV = false }) {
 					.filter(byPosition(newPos))
 					.some(e => e.hitbox)
 			)
-			e.position = newPos
+			vec2.copy(e.position, newPos)
 			e.hitbox.givesLength = true
-			e.off("hit", teleport)
 			e.on("hit", () => e.destroy())
 		})
 		.tag("enemy")

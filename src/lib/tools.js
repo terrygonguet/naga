@@ -1,6 +1,6 @@
 import { findByComponent } from "geotic"
 import { dirname } from "path"
-import { Vector } from "sylvester-es6/target/Vector"
+import { vec2 } from "gl-matrix"
 import line from "bresenham-line"
 
 /**
@@ -46,7 +46,7 @@ export function make_isInBounds({ width, height }) {
  */
 export function make_cmpPos(pt1) {
 	return function(pt2) {
-		return new Vector(pt1).eql(pt2)
+		return vec2.equals(pt1, pt2)
 	}
 }
 
@@ -56,37 +56,8 @@ export function make_cmpPos(pt1) {
  */
 export function byPosition(pos) {
 	return function(entity) {
-		return entity?.position.eql(pos)
+		return entity.position && vec2.equals(pos, entity.position)
 	}
-}
-
-// TODO : fade out
-/**
- * Makes a function that returns the distance of the second point with the first
- * @param {Array} pt1
- * @returns {Function}
- */
-export function make_distanceFrom(pt1) {
-	return function(pt2) {
-		return new Vector(pt1).distanceFrom(pt2)
-	}
-}
-
-/**
- * Converts vector pos to xy object
- * @param {Object} vect Vector or array
- */
-export function vectToxy(vect) {
-	let [x, y] = vect.elements || vect
-	return { x, y }
-}
-
-/**
- * Converts xy pos to vector
- * @param {Object} vect Vector or array
- */
-export function xyToVect({ x, y }) {
-	return new Vector([x, y])
 }
 
 /**
@@ -99,8 +70,8 @@ export function findByCanTick(component) {
 
 /**
  * Checks if the two points have a line of sight between them
- * @param {Vector} from
- * @param {Vector} to
+ * @param {vec2|Number[]} from
+ * @param {vec2|Number[]} to
  */
 export function canSee(from, to) {
 	let canSee = true
@@ -112,4 +83,13 @@ export function canSee(from, to) {
 		if (!canSee) break
 	}
 	return canSee
+}
+
+/**
+ * Converts vector pos to xy object
+ * @param {vec2|Number[]} vect vec2 or array
+ */
+function vectToxy(vect) {
+	let [x, y] = vect
+	return { x, y }
 }

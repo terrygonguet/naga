@@ -30,7 +30,7 @@ function threeByThree({ x, y }) {
 }
 
 export function update(game) {
-	let fogOfWar = findByComponent("fogOfWar")[0].fogOfWar
+	let fogOfWar = findByComponent("fogOfWar")[0]?.fogOfWar
 	if (!fogOfWar) return
 
 	let grid = fogOfWar.grid
@@ -39,7 +39,7 @@ export function update(game) {
 	let entities = findByComponent("position")
 
 	findByComponent("fov").forEach(ent => {
-		let [x, y] = ent.position.elements
+		let [x, y] = ent.position
 		let queue = threeByThree({ x, y })
 
 		while (queue.length) {

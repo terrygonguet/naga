@@ -1,6 +1,7 @@
 import _order from "./order.json"
 import { findByComponent } from "geotic"
 import { findByCanTick, make_isInBounds, byPosition } from "../tools.js"
+import { vec2 } from "gl-matrix"
 
 /**
  * A container for projectile data
@@ -8,18 +9,17 @@ import { findByCanTick, make_isInBounds, byPosition } from "../tools.js"
  * @param {Object} params
  */
 export function projectile(e, { direction } = {}) {
-	let floatPosition = e.position.add([0.5, 0.5])
-	return { direction: direction.toUnitVector(), floatPosition }
+	let floatPosition = vec2.add(vec2.create(), e.position, [0.5, 0.5])
+	return { direction: vec2.normalize(vec2.create(), direction), floatPosition }
 }
 
 export function update(game) {
 	findByCanTick("projectile").forEach(e => {
 		let { floatPosition, direction } = e.projectile
-		floatPosition = floatPosition.add(direction)
+		vec2.add(floatPosition, floatPosition, direction)
 
-		if (make_isInBounds(game)(...floatPosition.elements)) {
-			e.projectile.floatPosition = floatPosition
-			e.position = floatPosition.map(el => Math.floor(el))
+		if (make_isInBounds(game)(...floatPosition)) {
+			vec2.floor(e.position, floatPosition)
 			let blockingEnt = findByComponent("position")
 				.filter(byPosition(e.position))
 				.find(ent => ent?.hitbox?.blocksMoving)

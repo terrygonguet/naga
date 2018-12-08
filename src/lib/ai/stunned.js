@@ -1,3 +1,4 @@
+// TODO : add timeout
 /**
  * state update function for "stunned"
  * @param {Object} params

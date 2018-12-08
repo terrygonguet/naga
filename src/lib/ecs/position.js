@@ -1,5 +1,5 @@
 import _order from "./order.json"
-import { Vector } from "sylvester-es6/target/Vector"
+import { vec2 } from "gl-matrix"
 
 /**
  * Keeps track of the position
@@ -7,7 +7,9 @@ import { Vector } from "sylvester-es6/target/Vector"
  * @param {Number[]} elements The coordinates
  */
 export function position(e, elements) {
-	return new Vector(elements)
+	if (!elements) return vec2.create()
+	else if (elements instanceof Array) return vec2.fromValues(...elements)
+	else return elements
 }
 
 export function update(game) {}

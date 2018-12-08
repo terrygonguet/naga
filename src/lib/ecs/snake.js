@@ -15,6 +15,7 @@ import {
 import { make_cmpPos, findByCanTick, byPosition } from "../tools"
 import _order from "./order.json"
 import { addModifier, removeModifier } from "./sprite"
+import { vec2 } from "gl-matrix"
 
 /**
  * A snake
@@ -31,7 +32,11 @@ export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
 		body: [],
 		lastDirection: null,
 		mount() {
-			let head = make_head({ x, y, direction: "right", snakeId: e.id })
+			let head = make_head({
+				position: [x, y],
+				direction: "right",
+				snakeId: e.id,
+			})
 			e.snake.head = head.id
 			e.snake.body.push(head.id)
 			e.on("hit", id => {
@@ -76,7 +81,7 @@ export function update(game) {
 	// ye done goof'd
 	if (!direction) {
 		snakeEntity.emit("hit", snakeEntity.id)
-		// recalculate direction after the body becomes passable
+		// recalculate direction after the body has become passable
 		direction = getDirection({ snake, controller })
 		canMove = getPossibleDirections(snake)
 		direction = [
@@ -90,14 +95,13 @@ export function update(game) {
 	}
 
 	let nextPos = getNextPos({ snake, direction })
-	let entities = findByComponent("position").filter(byPosition(nextPos))
-
-	for (const ent of entities) {
-		if (ent?.hitbox?.canBeKilled) {
-			ent?.hitbox?.givesLength && snake.length++
-			ent.emit("hit", snakeEntity.id)
-		}
-	}
+	let entities = findByComponent("position")
+		.filter(byPosition(nextPos))
+		.filter(e => e?.hitbox?.canBeKilled)
+		.forEach(e => {
+			e?.hitbox?.givesLength && snake.length++
+			e.emit("hit", snakeEntity.id)
+		})
 
 	snake.lastDirection = direction
 	controller.direction = direction
@@ -106,8 +110,11 @@ export function update(game) {
 	// when the block becomes body it becomes snake
 	oldHead.sprite.texture = blocks.snake
 
-	let [x, y] = nextPos.elements
-	let head = make_head({ x, y, direction, snakeId: snakeEntity.id })
+	let head = make_head({
+		position: nextPos,
+		direction,
+		snakeId: snakeEntity.id,
+	})
 	snake.head = head.id
 	snake.body.push(head.id)
 	// we can remove more than on segment per tick if we get hit
@@ -125,10 +132,10 @@ export function update(game) {
  * @param {Number} params.snakeId
  * @returns {Entity}
  */
-function make_head({ x, y, direction, snakeId }) {
+function make_head({ position, direction, snakeId }) {
 	let snakeEnt = findById(snakeId)
 	let e = entity()
-		.add("position", [x, y])
+		.add("position", position)
 		.add("fov")
 		.add("hitbox", { blocksMoving: true })
 		.add("sprite", {
@@ -149,15 +156,16 @@ function make_head({ x, y, direction, snakeId }) {
 }
 
 /**
- * Returns the position if the cell in the supplied direction
+ * Returns the position of the cell in the supplied direction
  * relative to the snake's head
  * @param {Object} params
  * @param {Object} params.snake The snake component
  * @param {String} params.direction
+ * @param {vec2|Number[]} [params.out]
  * @returns {Object} { x, y }
  */
-function getNextPos({ snake, direction }) {
-	return findById(snake.head).position.add(vectors[direction])
+function getNextPos({ snake, direction, out = vec2.create() }) {
+	return vec2.add(out, findById(snake.head).position, vectors[direction])
 }
 
 /**
@@ -183,9 +191,10 @@ function getDirection({ snake, controller }) {
  */
 function getPossibleDirections(snake) {
 	let opposite = reverse(snake.lastDirection)
+	let temp = vec2.create()
 	let canMove = _values(directions).map(direction => {
 		if (direction === opposite) return [direction, false]
-		let nextPos = getNextPos({ snake, direction })
+		let nextPos = getNextPos({ snake, direction, out: temp })
 		let blockingEntities = findByComponent("position")
 			.filter(byPosition(nextPos))
 			.some(e => e?.hitbox?.blocksMoving)

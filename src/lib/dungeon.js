@@ -68,7 +68,7 @@ export function createDungeon({
 	} while (_uniq(indexes).length !== 1)
 
 	// throw in some more doors
-	for (let i = 0; i < 2 * Math.max(nbRoomW, nbRoomH); i++) {
+	for (let i = 0; i < 2 * (nbRoomW + nbRoomH); i++) {
 		let x1 = Math.floor(rng() * nbRoomW),
 			y1 = Math.floor(rng() * nbRoomH)
 		let room1 = rooms[xy2iRooms(x1, y1)]

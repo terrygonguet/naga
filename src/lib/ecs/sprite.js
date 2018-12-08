@@ -1,12 +1,11 @@
 import { blocks } from "../blocks"
 import { findByComponent, findByTag } from "geotic"
-import { make_xy2i } from "../tools"
 import _order from "./order.json"
 import { Sprite, filters } from "pixi.js"
-import { Vector } from "sylvester-es6/target/Vector"
+import { vec2 } from "gl-matrix"
 
 /**
- * A sprite, can be either background of foreground.
+ * A sprite
  * Modifiers can be applied to any sprite
  * @param {Entity} e The entity to attach the component to
  * @param {Object} params
@@ -21,7 +20,7 @@ export function sprite(
 	let pos = e.position
 	let game = findByTag("game")[0].tags.game
 	let s = makeSprite(game.sheet.textures[texture])
-	s.position.set(...pos.x(s.width).elements)
+	s.position.set(pos[0] * s.width, pos[1] * s.height)
 	modifiers.forEach(m => modifiersAdd[m]?.(s))
 
 	return {
@@ -47,9 +46,10 @@ export function update(game) {
 		if (!ent.position) return
 		let pos = ent.position
 		let pixiSprite = ent.sprite.texture
-		let oldPos = new Vector([pixiSprite.x, pixiSprite.y])
-		if (!pos.eql(oldPos))
-			pixiSprite.position.set(...pos.x(pixiSprite.width).elements)
+		pixiSprite.position.set(
+			pos[0] * pixiSprite.width,
+			pos[1] * pixiSprite.height
+		)
 	})
 }
 

@@ -1,7 +1,6 @@
-import { make_distanceFrom, byPosition, vectToxy, canSee } from "../tools"
+import { byPosition, canSee } from "../tools"
 import { findByComponent } from "geotic"
-import line from "bresenham-line"
-import { Vector } from "sylvester-es6/target/Vector"
+import { vec2 } from "gl-matrix"
 
 /**
  * state update function for "idle"
@@ -23,7 +22,7 @@ export function update({ entity, closestSnake, game, machine }) {
 
 	// if the player is in range we check line of sight
 	if (
-		pos.distanceFrom(closestSnake.position) <= sightRange &&
+		vec2.distance(pos, closestSnake.position) <= sightRange &&
 		canSee(pos, closestSnake.position)
 	) {
 		return machine.transition(state, "SEE_PLAYER").value
@@ -32,7 +31,7 @@ export function update({ entity, closestSnake, game, machine }) {
 }
 
 function randomMove(entity, rng) {
-	let [x, y] = entity.position.elements
+	let [x, y] = entity.position
 	// add +/-1 to either x or y
 	rng() < 0.5
 		? (x += (-1) ** Math.round(rng()))
@@ -41,5 +40,5 @@ function randomMove(entity, rng) {
 	let canMove = !findByComponent("position")
 		.filter(byPosition([x, y]))
 		.some(e => e.hitbox)
-	if (canMove) entity.position = new Vector([x, y])
+	if (canMove) vec2.set(entity.position, x, y)
 }

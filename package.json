@@ -37,11 +37,11 @@
 		"event-stream": "^3.3.4",
 		"express": "^4.16.4",
 		"geotic": "^2.4.1",
+		"gl-matrix": "^2.8.1",
 		"lodash": "^4.17.11",
 		"nodemon": "^1.18.4",
 		"pixi.js": "^4.8.2",
 		"seedrandom": "^2.4.4",
-		"sylvester-es6": "0.0.2",
 		"vue": "^2.5.17",
 		"xstate": "^4.1.1"
 	},

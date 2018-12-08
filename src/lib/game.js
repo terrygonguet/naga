@@ -3,8 +3,9 @@ import { entity, component, findByComponent, findById, findByTag } from "geotic"
 import { createDungeon } from "./dungeon"
 import { make_i2xy, byPosition } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
-import { Application, Texture, Spritesheet, Container } from "pixi.js"
-import { Vector } from "sylvester-es6/target/Vector"
+import { Application, Texture, Spritesheet, Container, Sprite } from "pixi.js"
+import * as PIXI from "pixi.js"
+import { vec2 } from "gl-matrix"
 
 import spritesImage from "../assets/micro_dungeon_tileset.png"
 import spritesData from "../assets/micro_dungeon_tileset.json"
@@ -24,18 +25,8 @@ export default class Game {
 	seed = Date.now().toString(36)
 	rng = seedrandom(this.seed)
 
-	background = createDungeon({
-		roomWidth: 9,
-		roomHeight: 9,
-		nbRoomW: 12,
-		nbRoomH: 12,
-		rng: this.rng,
-	})
-
-	// TODO : fix ugly (probably config file ?)
-	width = this.background.width
-	height = this.background.height
-	foreground = Array(this.width * this.height).fill(null)
+	width = 0
+	height = 0
 
 	app = new Application({
 		view: document.querySelector("#screen"),
@@ -61,8 +52,19 @@ export default class Game {
 
 	ready() {
 		entity().tag("game", this) // global reference
+		console.log(vec2)
 
-		this.background.forEach((c, i) =>
+		let dungeon = createDungeon({
+			roomWidth: 9,
+			roomHeight: 9,
+			nbRoomW: 12,
+			nbRoomH: 12,
+			rng: this.rng,
+		})
+		this.width = dungeon.width
+		this.height = dungeon.height
+
+		dungeon.forEach((c, i) =>
 			makeBlock({
 				position: [i % this.width, Math.floor(i / this.width)],
 				texture: c,
@@ -90,7 +92,8 @@ export default class Game {
 		let max = 20 + Math.round(this.rng() * 10)
 		let i2xy = make_i2xy(this.width)
 		for (let i = 0; i < max; i++) {
-			let { x, y } = i2xy(Math.floor(this.rng() * this.foreground.length))
+			let x = Math.floor(this.rng() * this.width),
+				y = Math.floor(this.rng() * this.height)
 			let position = [x, y]
 			let canSpawn = !findByComponent("position")
 				.filter(byPosition(position))
@@ -141,19 +144,18 @@ export default class Game {
 	initECS() {
 		if (this.systems.length) return
 		const context = require.context("./ecs", false, /\.js$/)
-
 		for (const path of context.keys()) {
 			let { name, update, component: comp, order } = context(path)
 			update.order = order
 			component(name, comp)
 			this.systems.push(update)
 		}
-
 		this.systems.sort((a, b) => a.order - b.order)
 	}
 
 	initDisplay() {
 		this.app.ticker.add(this.displayTick.bind(this))
+		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
 
 		let texture = Texture.fromImage(spritesImage)
 		this.sheet = new Spritesheet(texture.baseTexture, spritesData, spritesImage)
@@ -175,18 +177,24 @@ export default class Game {
 
 	displayTick(delta) {
 		let { x, y } = this.stage.position
-		let cur = new Vector([x, y])
-		let snakeHead = findById(findByComponent("snake")[0].snake.head)
-		let midScreen = new Vector([innerWidth / 2, innerHeight / 2])
-		let target = midScreen.subtract(snakeHead.position.x(16))
-		let distance = cur.distanceFrom(target)
+		let cur = [x, y]
+		let snakeEnt = findByComponent("snake")[0]
+		if (!snakeEnt) return
+		let snakeHead = findById(snakeEnt.snake.head)
+		let hpos = snakeHead.position
+		let midScreen = [innerWidth / 2, innerHeight / 2]
+		let target = vec2.sub(midScreen, midScreen, [hpos[0] * 16, hpos[1] * 16])
+		let distance = vec2.distance(cur, target)
 
 		if (distance > 200 || distance < delta) {
-			this.stage.position.set(...target.elements)
+			vec2.round(target, target)
+			this.stage.position.set(...target)
 		} else {
-			let direction = target.subtract(cur).toUnitVector()
-			cur = cur.add(direction.x(delta)).round()
-			this.stage.position.set(...cur.elements)
+			let direction = vec2.sub(target, target, cur)
+			vec2.normalize(direction, direction)
+			vec2.scaleAndAdd(cur, cur, direction, delta)
+			vec2.round(cur, cur)
+			this.stage.position.set(...cur)
 		}
 	}
 }
