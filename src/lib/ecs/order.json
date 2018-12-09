@@ -4,6 +4,7 @@
 	"position": 1,
 	"perf": 1,
 	"hitbox": 1,
+	"background": 1,
 	"invincible": 9,
 	"snake": 10,
 	"projectile": 11,

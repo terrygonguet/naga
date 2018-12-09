@@ -51,8 +51,6 @@ export default class Game {
 	}
 
 	ready() {
-		entity().tag("game", this) // global reference
-
 		let dungeon = createDungeon({
 			roomWidth: 9,
 			roomHeight: 9,
@@ -63,12 +61,8 @@ export default class Game {
 		this.width = dungeon.width
 		this.height = dungeon.height
 
-		dungeon.forEach((c, i) =>
-			makeBlock({
-				position: [i % this.width, Math.floor(i / this.width)],
-				texture: c,
-			})
-		)
+		entity().tag("game", this) // global reference
+		entity().add("background", { sprites: dungeon })
 
 		let { width, height } = this.layers.background
 		this.stage.position.set(
@@ -165,7 +159,7 @@ export default class Game {
 			this.stage.addChild(this.layers.entities)
 			this.stage.addChild(this.layers.fogOfWar)
 			// I don't know why but it needs that
-			this.layers.fogOfWar.setTransform(-8, -8)
+			this.layers.entities.setTransform(8, 8)
 			this.ready()
 		})
 	}
