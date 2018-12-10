@@ -169,7 +169,9 @@ export default class Game {
 			try {
 				s(this)
 			} catch (err) {
-				this.paused = true
+				if (process.env.NODE_ENV === "development") {
+					this.paused = true
+				}
 				console.error(err)
 			}
 		})
