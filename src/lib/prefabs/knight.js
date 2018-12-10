@@ -1,6 +1,6 @@
 import { entity, findById, findByComponent } from "geotic"
 import { blocks, animations } from "../blocks"
-import { vectors, turnRight } from "../directions"
+import { vectors, turnRight, directions } from "../directions"
 import { isPositionBlocked } from "../tools"
 import { Machine } from "xstate"
 import { vec2 } from "gl-matrix"
@@ -11,7 +11,6 @@ export function make({ position, flipAnim = false, flipV = false }) {
 
 	let e = entity()
 		.add("position", position)
-		.add("sprite", { texture: blocks.enemy.knight })
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true })
 		.add("speed", { speed: 2 })
@@ -47,7 +46,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 		.once("hit", function(id) {
 			let machine = Machine(e.ai.machine)
 
-			e.add("invincible", 20).once("invincible-end", () => {
+			e.add("invincible", 20).once("invincibleend", () => {
 				e.hitbox.blocksMoving = false
 				e.hitbox.givesLength = true
 				e.ai.state = machine.transition(e.ai.state, "RECOVER").value
@@ -62,7 +61,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 
 			let movePos = vec2.create(),
 				canMove,
-				dir,
+				dir = directions.right, // default if !snake.lastDirection
 				i = 1
 			do {
 				// try to move away in any direction

@@ -4,7 +4,7 @@ import _order from "./order.json"
 import { addModifier, removeModifier } from "./sprite"
 
 /**
- * Contains an Array of definitions of shape
+ * Contains an Array of definitions of shape:
  * [[<sprite>, <nbFrames>], ...]
  * Creates a sprite component if not found
  * @param {Entity} e The entity to attach the component to

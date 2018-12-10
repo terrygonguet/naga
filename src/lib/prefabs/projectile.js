@@ -11,7 +11,6 @@ export function make({
 }) {
 	return entity()
 		.add("position", vec2.clone(position))
-		.add("sprite", { texture: frames[0][0] })
 		.add("animation", { frames })
 		.add("hitbox")
 		.add("speed", { speed })

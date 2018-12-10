@@ -7,7 +7,6 @@ export function make({ position, flipAnim = false, flipV = false }) {
 
 	let e = entity()
 		.add("position", position)
-		.add("sprite", { texture: blocks.enemy.female })
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true, givesLength: true })
 		.add("speed", { speed: 2 })

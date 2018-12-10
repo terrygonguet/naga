@@ -3,7 +3,7 @@ import { findByComponent, findById } from "geotic"
 import { vec2 } from "gl-matrix"
 
 /**
- * state update function for "chasing"
+ * state update function for "fleeing"
  * @param {Object} params
  * @param {Object} params.entity
  * @param {Object} params.closestSnake
@@ -32,9 +32,7 @@ export function update({ entity, closestSnake, game, machine }) {
 			vec2.sub(moveTo, moveTo, [Math.sign(dx) ** (!dx ? 0 : 1), 0])
 		else vec2.sub(moveTo, moveTo, [0, Math.sign(dy) ** (!dy ? 0 : 1)])
 
-		// we check if the way is clear and move
-		let canMove = !isPositionBlocked(moveTo)
-		if (canMove) vec2.copy(pos, moveTo)
+		if (!isPositionBlocked(moveTo)) vec2.copy(pos, moveTo)
 	}
 	return state
 }

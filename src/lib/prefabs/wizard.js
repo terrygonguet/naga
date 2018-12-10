@@ -11,7 +11,6 @@ export function make({ position, flipAnim = false, flipV = false }) {
 
 	let e = entity()
 		.add("position", position)
-		.add("sprite", { texture: blocks.enemy.bear })
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true })
 		.add("speed", { speed: 2 })

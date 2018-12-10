@@ -13,10 +13,10 @@ import {
 	fromPairs as _fromPairs,
 } from "lodash"
 import {
-	make_cmpPos,
 	findByCanTick,
 	findByPosition,
 	isPositionBlocked,
+	haveHitbox,
 } from "../tools"
 import _order from "./order.json"
 import { addModifier, removeModifier } from "./sprite"
@@ -47,7 +47,7 @@ export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
 			e.on("hit", id => {
 				let snake = e.snake
 				if (e.has("invincible")) return
-				e.add("invincible", 35).once("invincible-end", () => {
+				e.add("invincible", 35).once("invincibleend", () => {
 					snake.body.forEach(b => {
 						findById(b).hitbox.blocksMoving = false
 					})
@@ -101,7 +101,7 @@ export function update(game) {
 
 	let nextPos = getNextPos({ snake, direction })
 	let entities = findByPosition(nextPos)
-		.filter(e => e?.hitbox?.canBeKilled)
+		.filter(haveHitbox({ canBeKilled: true }))
 		.forEach(e => {
 			e?.hitbox?.givesLength && snake.length++
 			e.emit("hit", snakeEntity.id)

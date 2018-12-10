@@ -5,7 +5,7 @@ import { vec2 } from "gl-matrix"
 import { animations } from "../blocks"
 
 /**
- * state update function for "chasing"
+ * state update function for "firing"
  * @param {Object} params
  * @param {Object} params.entity
  * @param {Object} params.closestSnake

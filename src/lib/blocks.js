@@ -1,3 +1,6 @@
+/**
+ * "enum" of all the sprite keys
+ */
 export const blocks = {
 	wall: "wall",
 	walls: {
@@ -42,6 +45,9 @@ export const blocks = {
 	},
 }
 
+/**
+ * "enum" of all the modifier names
+ */
 export const modifiers = {
 	flipV: "flipV",
 	flipH: "flipH",
@@ -53,6 +59,9 @@ export const modifiers = {
 	transparent: "transparent",
 }
 
+/**
+ * All the sprites to consider wall
+ */
 export const walls = [
 	blocks.wall,
 	blocks.walls.top,
@@ -63,10 +72,20 @@ export const walls = [
 	blocks.column,
 ]
 
+/**
+ * All the sprites to consider snake
+ */
 export const snake = [blocks.snake, blocks.snakeHead]
 
+/**
+ * All the sprites to consider walls including doors
+ */
 export const doorAndWalls = [...walls, blocks.door]
 
+/**
+ * "enum" of all the animations, in the format:
+ * [[sprite, nbTicks], ...]
+ */
 export const animations = {
 	enemyRed: [[blocks.enemy.red, 8], [blocks.enemy.redLow, 8]],
 	enemyGreen: [[blocks.enemy.green, 8], [blocks.enemy.greenLow, 8]],

@@ -34,12 +34,15 @@ export function update(game) {
 
 		if (make_isInBounds(game)(...floatPosition)) {
 			let temp = vec2.floor(vec2.create(), floatPosition)
+			// find if we hit something
 			let blockingEnt = findByPosition(temp).find(
 				ent => ent?.hitbox?.blocksMoving
 			)
+			// if we hit we emit else just move
 			if (blockingEnt) {
 				causesDamage && blockingEnt.emit("hit", e.id)
 				e.emit("collide", blockingEnt)
+				// if piercing we keep moving else we destroy
 				if (pierces) {
 					vec2.copy(e.position, temp)
 					e.emit("move")

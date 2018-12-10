@@ -42,6 +42,7 @@ export function update(game) {
 		if (!closestSnake) return // whatever
 		let aimachine = Machine(machine)
 
+		// we call the update function for the current state and they return the next state
 		ent.ai.state = stateUpdates[state]({
 			game,
 			closestSnake,

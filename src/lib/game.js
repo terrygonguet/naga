@@ -51,6 +51,9 @@ export default class Game {
 		this.initDisplay()
 	}
 
+	/**
+	 * Called when the ECS and Graphics systems are set up
+	 */
 	ready() {
 		let dungeon = createDungeon({
 			roomWidth: 9,
@@ -70,10 +73,6 @@ export default class Game {
 			Math.round(innerWidth / 2 - width / 2),
 			Math.round(innerHeight / 2 - height / 2)
 		)
-		// TODO : find where to put that
-		setTimeout(() => {
-			this.layers.background.cacheAsBitmap = true
-		}, 2000)
 
 		makeSnake()
 
@@ -83,7 +82,7 @@ export default class Game {
 		})
 
 		// make some enemies on empty spaces
-		let max = 20 + Math.round(this.rng() * 10)
+		let max = this.width + Math.round((this.rng() * this.height) / 2)
 		let i2xy = make_i2xy(this.width)
 		for (let i = 0; i < max; i++) {
 			let x = Math.floor(this.rng() * this.width),
@@ -96,7 +95,7 @@ export default class Game {
 			}
 
 			let r = this.rng()
-			if (r < 1)
+			if (r < 0.1)
 				makeWizard({
 					position,
 					flipAnim: this.rng() < 0.5,
@@ -134,6 +133,9 @@ export default class Game {
 		this.tick()
 	}
 
+	/**
+	 * Registers component factories and gets update functions
+	 */
 	initECS() {
 		if (this.systems.length) return
 		const context = require.context("./ecs", false, /\.js$/)
@@ -146,6 +148,9 @@ export default class Game {
 		this.systems.sort((a, b) => a.order - b.order)
 	}
 
+	/**
+	 * Sets the graphics up and loads the spritesheet
+	 */
 	initDisplay() {
 		this.app.ticker.add(this.displayTick.bind(this))
 		PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
@@ -163,6 +168,9 @@ export default class Game {
 		})
 	}
 
+	/**
+	 * Called 20 times a second
+	 */
 	tick() {
 		if (this.paused) return
 		this.systems.forEach(s => {
@@ -178,6 +186,10 @@ export default class Game {
 		this.time++
 	}
 
+	/**
+	 * Called every raf
+	 * @param {Number} delta
+	 */
 	displayTick(delta) {
 		let { x, y } = this.stage.position
 		let cur = [x, y]
@@ -189,10 +201,12 @@ export default class Game {
 		let target = vec2.sub(midScreen, midScreen, [hpos[0] * 16, hpos[1] * 16])
 		let distance = vec2.distance(cur, target)
 
+		// if we're close enough or too far we snap
 		if (distance > 200 || distance < delta) {
 			vec2.round(target, target)
 			this.stage.position.set(...target)
 		} else {
+			// smooth camera
 			let direction = vec2.sub(target, target, cur)
 			vec2.normalize(direction, direction)
 			vec2.scaleAndAdd(cur, cur, direction, delta)
