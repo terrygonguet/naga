@@ -27,6 +27,7 @@ export default class Game {
 
 	width = 0
 	height = 0
+	paused = false
 
 	app = new Application({
 		view: document.querySelector("#screen"),
@@ -97,7 +98,7 @@ export default class Game {
 			}
 
 			let r = this.rng()
-			if (r < 0.1)
+			if (r < 1)
 				makeWizard({
 					position,
 					flipAnim: this.rng() < 0.5,
@@ -165,7 +166,15 @@ export default class Game {
 	}
 
 	tick() {
-		this.systems.forEach(s => s(this))
+		if (this.paused) return
+		this.systems.forEach(s => {
+			try {
+				s(this)
+			} catch (err) {
+				this.paused = true
+				console.error(err)
+			}
+		})
 		this.time++
 	}
 

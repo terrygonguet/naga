@@ -4,27 +4,52 @@ import { findByCanTick, make_isInBounds, byPosition } from "../tools.js"
 import { vec2 } from "gl-matrix"
 
 /**
+ * Events emitted :
+ * "outofbouds"
+ * "collided" passes the entity it collided with
+ */
+
+/**
  * A container for projectile data
  * @param {Entity} e The entity to attach the component to
  * @param {Object} params
  */
-export function projectile(e, { direction } = {}) {
+export function projectile(
+	e,
+	{ direction, causesDamage = true, pierces = false } = {}
+) {
 	let floatPosition = vec2.add(vec2.create(), e.position, [0.5, 0.5])
-	return { direction: vec2.normalize(vec2.create(), direction), floatPosition }
+	return {
+		direction: vec2.normalize(vec2.create(), direction),
+		floatPosition,
+		causesDamage,
+		pierces,
+	}
 }
 
 export function update(game) {
 	findByCanTick("projectile").forEach(e => {
-		let { floatPosition, direction } = e.projectile
+		let { floatPosition, direction, causesDamage, pierces } = e.projectile
 		vec2.add(floatPosition, floatPosition, direction)
 
 		if (make_isInBounds(game)(...floatPosition)) {
-			vec2.floor(e.position, floatPosition)
+			let temp = vec2.floor(vec2.create(), floatPosition)
 			let blockingEnt = findByComponent("position")
-				.filter(byPosition(e.position))
+				.filter(byPosition(temp))
 				.find(ent => ent?.hitbox?.blocksMoving)
-			blockingEnt?.emit("hit", e.id) && e.destroy()
+			if (blockingEnt) {
+				causesDamage && blockingEnt.emit("hit", e.id)
+				e.emit("collide", blockingEnt)
+				if (pierces) {
+					vec2.copy(e.position, temp)
+					e.emit("move")
+				} else e.destroy()
+			} else {
+				vec2.copy(e.position, temp)
+				e.emit("move")
+			}
 		} else {
+			e.emit("outofbounds")
 			e.destroy()
 		}
 	})
