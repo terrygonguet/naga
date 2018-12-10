@@ -1,4 +1,4 @@
-import { byPosition, canSee } from "../tools"
+import { canSee, isPositionBlocked } from "../tools"
 import { findByComponent } from "geotic"
 import { vec2 } from "gl-matrix"
 
@@ -37,8 +37,6 @@ function randomMove(entity, rng) {
 		? (x += (-1) ** Math.round(rng()))
 		: (y += (-1) ** Math.round(rng()))
 
-	let canMove = !findByComponent("position")
-		.filter(byPosition([x, y]))
-		.some(e => e.hitbox)
+	let canMove = !isPositionBlocked([x, y])
 	if (canMove) vec2.set(entity.position, x, y)
 }

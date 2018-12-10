@@ -1,6 +1,6 @@
 import _order from "./order.json"
 import { findByComponent } from "geotic"
-import { findByCanTick, make_isInBounds, byPosition } from "../tools.js"
+import { findByCanTick, make_isInBounds, findByPosition } from "../tools.js"
 import { vec2 } from "gl-matrix"
 
 /**
@@ -34,9 +34,9 @@ export function update(game) {
 
 		if (make_isInBounds(game)(...floatPosition)) {
 			let temp = vec2.floor(vec2.create(), floatPosition)
-			let blockingEnt = findByComponent("position")
-				.filter(byPosition(temp))
-				.find(ent => ent?.hitbox?.blocksMoving)
+			let blockingEnt = findByPosition(temp).find(
+				ent => ent?.hitbox?.blocksMoving
+			)
 			if (blockingEnt) {
 				causesDamage && blockingEnt.emit("hit", e.id)
 				e.emit("collide", blockingEnt)

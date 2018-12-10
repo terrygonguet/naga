@@ -1,4 +1,4 @@
-import { byPosition, canSee } from "../tools"
+import { canSee, isPositionBlocked } from "../tools"
 import { findByComponent, findById } from "geotic"
 import { vec2 } from "gl-matrix"
 
@@ -33,9 +33,7 @@ export function update({ entity, closestSnake, game, machine }) {
 		else vec2.sub(moveTo, moveTo, [0, Math.sign(dy) ** (!dy ? 0 : 1)])
 
 		// we check if the way is clear and move
-		let canMove = !findByComponent("position")
-			.filter(byPosition(moveTo))
-			.some(e => e.hitbox)
+		let canMove = !isPositionBlocked(moveTo)
 		if (canMove) vec2.copy(pos, moveTo)
 	}
 	return state

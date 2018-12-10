@@ -1,7 +1,7 @@
 import { entity, findById, findByComponent } from "geotic"
 import { blocks, animations } from "../blocks"
 import { vectors, turnRight } from "../directions"
-import { byPosition } from "../tools"
+import { isPositionBlocked } from "../tools"
 import { Machine } from "xstate"
 import { vec2 } from "gl-matrix"
 
@@ -69,9 +69,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 				vec2.set(movePos, 0, 0)
 				dir = i == 1 ? snake.lastDirection : turnRight(dir)
 				vec2.add(movePos, e.position, vectors[dir])
-				canMove = !findByComponent("position")
-					.filter(byPosition(movePos))
-					.some(e => e.hitbox)
+				canMove = !isPositionBlocked(movePos)
 				i++
 			} while (!canMove && i <= 4)
 

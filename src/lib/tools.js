@@ -93,3 +93,50 @@ function vectToxy(vect) {
 	let [x, y] = vect
 	return { x, y }
 }
+
+/**
+ * Returns all entities that are at position pos
+ * @param {vec2|Number[]} pos the position to filter by
+ */
+export function findByPosition(pos) {
+	return findByComponent("position").filter(byPosition(pos))
+}
+
+/**
+ * Used with Array.prototype.some to check if any of the entities
+ * in the array have a hitbox with the specified attributes
+ * @param {Object} params
+ */
+export function haveHitbox({
+	blocksSight = false,
+	blocksMoving = false,
+	canBeKilled = false,
+	givesLength = false,
+} = {}) {
+	return function(entity) {
+		if (!entity.hitbox) return false
+		else if (!blocksMoving && !blocksSight && !canBeKilled && !givesLength)
+			return true
+		let hb = entity.hitbox
+		return (
+			(!blocksSight || hb.blocksSight === blocksSight) &&
+			(!blocksMoving || hb.blocksMoving === blocksMoving) &&
+			(!canBeKilled || hb.canBeKilled === canBeKilled) &&
+			(!givesLength || hb.givesLength === givesLength)
+		)
+	}
+}
+
+/**
+ * Shorthand
+ * @param {vec2|Number[]} pos
+ * @param {Boolean} [blocksMoving]
+ * @param {Boolean} [blocksSight]
+ */
+export function isPositionBlocked(
+	pos,
+	blocksMoving = false,
+	blocksSight = false
+) {
+	return findByPosition(pos).some(haveHitbox({ blocksMoving, blocksSight }))
+}

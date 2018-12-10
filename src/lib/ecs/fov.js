@@ -1,5 +1,10 @@
 import { findByComponent } from "geotic"
-import { make_xy2i, make_isInBounds, make_cmpPos, byPosition } from "../tools"
+import {
+	make_xy2i,
+	make_isInBounds,
+	make_cmpPos,
+	isPositionBlocked,
+} from "../tools"
 import _order from "./order.json"
 
 /**
@@ -52,9 +57,7 @@ export function update(game) {
 				grid[xy2i(x, y)] = 0
 				fogOfWar.dirty = true
 				// get stopped i.e. by walls and doors
-				let blocksSight = entities
-					.filter(byPosition([x, y]))
-					.some(e => e?.hitbox?.blocksSight)
+				let blocksSight = isPositionBlocked([x, y], false, true)
 				if (!blocksSight) queue.push(...threeByThree({ x, y }))
 			}
 		}

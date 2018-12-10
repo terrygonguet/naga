@@ -12,7 +12,12 @@ import {
 	values as _values,
 	fromPairs as _fromPairs,
 } from "lodash"
-import { make_cmpPos, findByCanTick, byPosition } from "../tools"
+import {
+	make_cmpPos,
+	findByCanTick,
+	findByPosition,
+	isPositionBlocked,
+} from "../tools"
 import _order from "./order.json"
 import { addModifier, removeModifier } from "./sprite"
 import { vec2 } from "gl-matrix"
@@ -95,8 +100,7 @@ export function update(game) {
 	}
 
 	let nextPos = getNextPos({ snake, direction })
-	let entities = findByComponent("position")
-		.filter(byPosition(nextPos))
+	let entities = findByPosition(nextPos)
 		.filter(e => e?.hitbox?.canBeKilled)
 		.forEach(e => {
 			e?.hitbox?.givesLength && snake.length++
@@ -195,10 +199,7 @@ function getPossibleDirections(snake) {
 	let canMove = _values(directions).map(direction => {
 		if (direction === opposite) return [direction, false]
 		let nextPos = getNextPos({ snake, direction, out: temp })
-		let blockingEntities = findByComponent("position")
-			.filter(byPosition(nextPos))
-			.some(e => e?.hitbox?.blocksMoving)
-		return [direction, !blockingEntities]
+		return [direction, !isPositionBlocked(nextPos, true)]
 	})
 	return _fromPairs(canMove)
 }

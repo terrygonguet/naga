@@ -1,7 +1,7 @@
 import { entity, findByComponent } from "geotic"
 import { blocks, animations } from "../blocks"
 import { vec2 } from "gl-matrix"
-import { byPosition } from "../tools"
+import { isPositionBlocked } from "../tools"
 import { Machine } from "xstate"
 import { make as makeProjectile } from "../prefabs/projectile"
 
@@ -72,9 +72,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 
 			function reappear() {
 				e.ai.state = aimachine.transition(e.ai.state, "RECOVER").value
-				let isFree = !findByComponent("position")
-					.filter(byPosition(projectile.position))
-					.some(e => e?.hitbox?.blocksMoving)
+				let isFree = !isPositionBlocked(projectile.position, true)
 				if (!isFree) {
 					do {
 						// backtrack until the space is free
@@ -84,9 +82,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 							projectile.projectile.direction
 						)
 						vec2.floor(projectile.position, projectile.projectile.floatPosition)
-						isFree = !findByComponent("position")
-							.filter(byPosition(projectile.position))
-							.some(e => e?.hitbox?.blocksMoving)
+						isFree = !isPositionBlocked(projectile.position, true)
 					} while (!isFree)
 				}
 				vec2.copy(e.position, projectile.position)

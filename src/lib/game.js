@@ -1,7 +1,7 @@
 import seedrandom from "seedrandom"
 import { entity, component, findByComponent, findById, findByTag } from "geotic"
 import { createDungeon } from "./dungeon"
-import { make_i2xy, byPosition } from "./tools"
+import { make_i2xy, isPositionBlocked } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
 import { Application, Texture, Spritesheet, Container, Sprite } from "pixi.js"
 import * as PIXI from "pixi.js"
@@ -89,9 +89,7 @@ export default class Game {
 			let x = Math.floor(this.rng() * this.width),
 				y = Math.floor(this.rng() * this.height)
 			let position = [x, y]
-			let canSpawn = !findByComponent("position")
-				.filter(byPosition(position))
-				.some(e => e?.hitbox)
+			let canSpawn = !isPositionBlocked(position)
 			if (!canSpawn) {
 				i--
 				continue
