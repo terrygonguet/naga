@@ -15,11 +15,6 @@ import { make as makeAprentice } from "./prefabs/apprentice"
 import { make as makeWizard } from "./prefabs/wizard"
 import { make as makeKnight } from "./prefabs/knight"
 import { make as makeSnake } from "./prefabs/snake"
-import { make as makeBlock } from "./prefabs/block"
-
-/* good seeds :
-"0.37a6adc41497a"
-*/
 
 export default class Game {
 	seed = Date.now().toString(36)
