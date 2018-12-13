@@ -30,7 +30,10 @@ import { vec2 } from "gl-matrix"
  * @param {Number} [params.x]
  * @param {Number} [params.y]
  */
-export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
+export function snake(
+	e,
+	{ length = 4, position = vec2.fromValues(4, 4) } = {}
+) {
 	return {
 		length,
 		head: null,
@@ -38,7 +41,7 @@ export function snake(e, { length = 4, x = 4, y = 4 } = {}) {
 		lastDirection: null,
 		mount() {
 			let head = make_head({
-				position: [x, y],
+				position,
 				direction: "right",
 				snakeId: e.id,
 			})

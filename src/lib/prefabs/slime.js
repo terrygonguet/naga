@@ -14,7 +14,7 @@ export function make({
 		.add("position", position)
 		.add("animation", { frames, flipV })
 		.add("hitbox", { canBeKilled: true, givesLength: true })
-		.add("speed", { speed: 2 })
+		.add("speed", 2)
 		.add("ai", {
 			data: {
 				chanceToMove: 0.3,

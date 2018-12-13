@@ -13,7 +13,7 @@ export function make({
 		.add("position", vec2.clone(position))
 		.add("animation", { frames })
 		.add("hitbox")
-		.add("speed", { speed })
+		.add("speed", speed)
 		.add("projectile", { direction, causesDamage, pierces })
 		.tag("projectile")
 }

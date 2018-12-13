@@ -4,10 +4,9 @@ import _order from "./order.json"
 /**
  * Move around randomly for now
  * @param {Entity} e The entity to attach the component to
- * @param {Object} params
- * @param {Number} params.speed a number of ticks per second inside [0:20]
+ * @param {Number} speed a number of ticks per second inside [0:20]
  */
-export function speed(e, { speed } = {}) {
+export function speed(e, speed) {
 	return { ticksEvery: 20 / speed, startTick: null, canTick: false }
 }
 

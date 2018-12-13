@@ -15,6 +15,7 @@ import { make as makeAprentice } from "./prefabs/apprentice"
 import { make as makeWizard } from "./prefabs/wizard"
 import { make as makeKnight } from "./prefabs/knight"
 import { make as makeSnake } from "./prefabs/snake"
+import { make as makeKey } from "./prefabs/key"
 
 export default class Game {
 	seed = Date.now().toString(36)
@@ -70,6 +71,7 @@ export default class Game {
 		)
 
 		makeSnake()
+		makeKey({ position: [6, 4] })
 
 		entity().add("fogOfWar", {
 			width: this.width,

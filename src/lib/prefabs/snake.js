@@ -1,8 +1,8 @@
 import { entity } from "geotic"
 
-export function make({ speed = 4 } = {}) {
+export function make({ speed = 4, position } = {}) {
 	return entity()
-		.add("snake")
+		.add("snake", { position })
 		.add("controller")
-		.add("speed", { speed })
+		.add("speed", speed)
 }

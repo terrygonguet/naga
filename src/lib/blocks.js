@@ -15,6 +15,7 @@ export const blocks = {
 	ground: "ground",
 	darkness: "darkness",
 	door: "door",
+	key: "key",
 
 	snake: "snake",
 	snakeHead: "snake-head",
