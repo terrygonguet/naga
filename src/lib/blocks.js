@@ -47,6 +47,9 @@ export const blocks = {
 
 	coin: "coin",
 	coinSide: "coin-side",
+
+	portal: "portal",
+	portalOpen: "portal-open",
 }
 
 /**
