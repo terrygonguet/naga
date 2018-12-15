@@ -16,6 +16,7 @@ import { make as makeWizard } from "./prefabs/wizard"
 import { make as makeKnight } from "./prefabs/knight"
 import { make as makeSnake } from "./prefabs/snake"
 import { make as makeKey } from "./prefabs/key"
+import { make as makePortal } from "./prefabs/portal"
 
 export default class Game {
 	seed = Date.now().toString(36)
@@ -30,6 +31,8 @@ export default class Game {
 		width: innerWidth,
 		height: innerHeight,
 		autoStart: false,
+		autoResize: true,
+		roundPixels: true,
 	})
 	stage = this.app.stage
 	sheet = null
@@ -66,21 +69,19 @@ export default class Game {
 
 		let { width, height } = this.layers.background
 		this.stage.position.set(
-			Math.round(innerWidth / 2 - width / 2),
-			Math.round(innerHeight / 2 - height / 2)
+			innerWidth / 2 - width / 2,
+			innerHeight / 2 - height / 2
 		)
 
 		makeSnake()
 		makeKey({ position: findRandomFreePosition(this) })
 
-		entity()
-			.add("position", [6, 4])
-			.add("animation", { frames: animations.coin })
+		makePortal({ position: findRandomFreePosition(this) })
 
-		entity().add("fogOfWar", {
-			width: this.width,
-			height: this.height,
-		})
+		// entity().add("fogOfWar", {
+		// 	width: this.width,
+		// 	height: this.height,
+		// })
 
 		// make some enemies on empty spaces
 		let max = this.width + Math.round((this.rng() * this.height) / 2)
@@ -101,7 +102,7 @@ export default class Game {
 					flipAnim: this.rng() < 0.5,
 					flipV: this.rng() < 0.5,
 				})
-			else if (r < 0.4)
+			else if (r < 0.3)
 				makeKnight({
 					position,
 					flipAnim: this.rng() < 0.5,
@@ -197,14 +198,12 @@ export default class Game {
 
 		// if we're close enough or too far we snap
 		if (distance > 200 || distance < delta) {
-			vec2.round(target, target)
 			this.stage.position.set(...target)
 		} else {
 			// smooth camera
 			let direction = vec2.sub(target, target, cur)
 			vec2.normalize(direction, direction)
 			vec2.scaleAndAdd(cur, cur, direction, delta)
-			vec2.round(cur, cur)
 			this.stage.position.set(...cur)
 		}
 	}

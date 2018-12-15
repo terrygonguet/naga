@@ -104,8 +104,8 @@ export function make({ nbRoomW, nbRoomH, roomWidth, roomHeight, rng }) {
 		let hasDoor = rng() < 0.5
 		if (room.right) {
 			if (hasDoor) {
-				grid[xy2iGrid((x + 1) * rw, y * rh + Math.floor(rh / 2))] = blocks.door
-				grid[xy2iGrid((x + 1) * rw, y * rh + Math.ceil(rh / 2))] = blocks.door
+				let doorOffset = Math.floor(1 + rng() * (rh - 2)) // random position in the wall
+				grid[xy2iGrid((x + 1) * rw, y * rh + doorOffset)] = blocks.door
 			} else {
 				for (let h = 1; h < roomHeight - 1; h++) {
 					grid[xy2iGrid((x + 1) * rw, y * rh + h)] = blocks.ground
@@ -114,8 +114,8 @@ export function make({ nbRoomW, nbRoomH, roomWidth, roomHeight, rng }) {
 		}
 		if (room.down) {
 			if (hasDoor) {
-				grid[xy2iGrid(x * rw + Math.floor(rw / 2), (y + 1) * rh)] = blocks.door
-				grid[xy2iGrid(x * rw + Math.ceil(rw / 2), (y + 1) * rh)] = blocks.door
+				let doorOffset = Math.floor(1 + rng() * (rw - 2)) // random position in the wall
+				grid[xy2iGrid(x * rw + doorOffset, (y + 1) * rh)] = blocks.door
 			} else {
 				for (let w = 1; w < roomWidth - 1; w++) {
 					grid[xy2iGrid(x * rw + w, (y + 1) * rh)] = blocks.ground

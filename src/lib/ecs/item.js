@@ -4,12 +4,20 @@ import { getTag, findById } from "geotic"
 import { vec2 } from "gl-matrix"
 
 /**
+ * Events emitted :
+ * "pickedup"
+ */
+
+/**
  * A container for template data
  * @param {Entity} e The entity to attach the component to
  * @param {Object} params
  */
 export function item(e) {
-	e.on("hit", () => (e.item.pickedUp = true))
+	e.on("hit", id => {
+		e.item.pickedUp = true
+		e.emit("pickedup", id)
+	})
 	return { pickedUp: false, previousBodyPositions: [] }
 }
 
