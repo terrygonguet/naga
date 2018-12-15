@@ -1,5 +1,5 @@
 import { blocks } from "../blocks"
-import { findByComponent, findByTag } from "geotic"
+import { findByComponent, getTag } from "geotic"
 import _order from "./order.json"
 import { Sprite, filters } from "pixi.js"
 import { vec2 } from "gl-matrix"
@@ -18,7 +18,7 @@ export function sprite(
 	{ texture, layer = "entities", modifiers = [] } = {}
 ) {
 	let pos = e.position
-	let game = findByTag("game")[0].tags.game
+	let game = getTag("game")
 	let s = makeSprite(game.sheet.textures[texture])
 	s.position.set(pos[0] * s.width, pos[1] * s.height)
 	modifiers.forEach(m => modifiersAdd[m]?.(s))

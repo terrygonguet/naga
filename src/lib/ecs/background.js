@@ -26,7 +26,13 @@ export function background(e, { sprites } = {}) {
 				})
 		}
 	})
-	return { timeToCache: 5 }
+	return {
+		timeToCache: 5,
+		unmount() {
+			game.layers.background.cacheAsBitmap = false
+			game.layers.background.removeChildren()
+		},
+	}
 }
 
 export function update(game) {

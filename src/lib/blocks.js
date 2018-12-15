@@ -44,6 +44,9 @@ export const blocks = {
 		s7: "sprite63",
 		s8: "sprite64",
 	},
+
+	coin: "coin",
+	coinSide: "coin-side",
 }
 
 /**
@@ -104,4 +107,5 @@ export const animations = {
 		[blocks.magic.s7, 2],
 		[blocks.magic.s8, 2],
 	],
+	coin: [[blocks.coin, 7], [blocks.coinSide, 7]],
 }

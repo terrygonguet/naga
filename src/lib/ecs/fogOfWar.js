@@ -1,5 +1,5 @@
 import { blocks, modifiers } from "../blocks"
-import { findByComponent, findByTag } from "geotic"
+import { findByComponent, getTag } from "geotic"
 import { make_xy2i, make_i2xy } from "../tools"
 import _order from "./order.json"
 import { Graphics } from "pixi.js"
@@ -15,7 +15,7 @@ export function fogOfWar(e, { width, height } = {}) {
 	if (findByComponent("fogOfWar").length)
 		throw new Error("Only one fog of war component should exist")
 
-	let game = findByTag("game")[0].tags.game
+	let game = getTag("game")
 	let grid = Array(width * height).fill(1)
 	let xy2i = make_xy2i(width)
 	let i2xy = make_i2xy(width)
@@ -40,6 +40,10 @@ export function fogOfWar(e, { width, height } = {}) {
 		dirty: true,
 		width,
 		height,
+		unmount() {
+			game.layers.fogOfWar.cacheAsBitmap = false
+			game.layers.fogOfWar.removeChildren()
+		},
 	}
 }
 

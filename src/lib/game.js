@@ -73,6 +73,10 @@ export default class Game {
 		makeSnake()
 		makeKey({ position: findRandomFreePosition(this) })
 
+		entity()
+			.add("position", [6, 4])
+			.add("animation", { frames: animations.coin })
+
 		entity().add("fogOfWar", {
 			width: this.width,
 			height: this.height,
