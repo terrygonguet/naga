@@ -140,3 +140,26 @@ export function isPositionBlocked(
 ) {
 	return findByPosition(pos).some(haveHitbox({ blocksMoving, blocksSight }))
 }
+
+/**
+ * What do you expect this one to do ?
+ * @param {Object} params
+ * @param {Number} width
+ * @param {Number} height
+ * @param {Function} [rng]
+ * @param {Boolean} [blocksMoving]
+ * @param {Boolean} [blocksSight]
+ */
+export function findRandomFreePosition({
+	width,
+	height,
+	rng = Math.random,
+	blocksMoving = false,
+	blocksSight = false,
+}) {
+	let position = vec2.floor(vec2.create(), [rng() * width, rng() * height])
+	while (isPositionBlocked(position, blocksMoving, blocksSight)) {
+		position = vec2.floor(position, [rng() * width, rng() * height])
+	}
+	return position
+}

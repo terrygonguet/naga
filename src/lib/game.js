@@ -1,6 +1,6 @@
 import seedrandom from "seedrandom"
 import { entity, component, findByComponent, findById, findByTag } from "geotic"
-import { make_i2xy, isPositionBlocked } from "./tools"
+import { make_i2xy, isPositionBlocked, findRandomFreePosition } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
 import { Application, Texture, Spritesheet, Container, Sprite } from "pixi.js"
 import * as PIXI from "pixi.js"
@@ -71,17 +71,7 @@ export default class Game {
 		)
 
 		makeSnake()
-		let randPos = vec2.floor(vec2.create(), [
-			this.rng() * this.width,
-			this.rng() * this.height,
-		])
-		while (isPositionBlocked(randPos)) {
-			randPos = vec2.floor(randPos, [
-				this.rng() * this.width,
-				this.rng() * this.height,
-			])
-		}
-		makeKey({ position: randPos })
+		makeKey({ position: findRandomFreePosition(this) })
 
 		entity().add("fogOfWar", {
 			width: this.width,
@@ -92,14 +82,7 @@ export default class Game {
 		let max = this.width + Math.round((this.rng() * this.height) / 2)
 		let i2xy = make_i2xy(this.width)
 		for (let i = 0; i < max; i++) {
-			let x = Math.floor(this.rng() * this.width),
-				y = Math.floor(this.rng() * this.height)
-			let position = [x, y]
-			let canSpawn = !isPositionBlocked(position)
-			if (!canSpawn) {
-				i--
-				continue
-			}
+			let position = findRandomFreePosition(this)
 
 			let r = this.rng()
 			if (r < 0.1)
