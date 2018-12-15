@@ -1,6 +1,5 @@
 import seedrandom from "seedrandom"
 import { entity, component, findByComponent, findById, findByTag } from "geotic"
-import { createDungeon } from "./dungeon"
 import { make_i2xy, isPositionBlocked } from "./tools"
 import { blocks, animations, walls, doorAndWalls } from "./blocks"
 import { Application, Texture, Spritesheet, Container, Sprite } from "pixi.js"
@@ -10,6 +9,7 @@ import { vec2 } from "gl-matrix"
 import spritesImage from "../assets/micro_dungeon_tileset.png"
 import spritesData from "../assets/micro_dungeon_tileset.json"
 
+import { make as makeDungeon } from "./prefabs/dungeon"
 import { make as makeSlime } from "./prefabs/slime"
 import { make as makeAprentice } from "./prefabs/apprentice"
 import { make as makeWizard } from "./prefabs/wizard"
@@ -51,7 +51,7 @@ export default class Game {
 	 * Called when the ECS and Graphics systems are set up
 	 */
 	ready() {
-		let dungeon = createDungeon({
+		let dungeon = makeDungeon({
 			roomWidth: 9,
 			roomHeight: 9,
 			nbRoomW: 12,
@@ -71,7 +71,17 @@ export default class Game {
 		)
 
 		makeSnake()
-		makeKey({ position: [6, 4] })
+		let randPos = vec2.floor(vec2.create(), [
+			this.rng() * this.width,
+			this.rng() * this.height,
+		])
+		while (isPositionBlocked(randPos)) {
+			randPos = vec2.floor(randPos, [
+				this.rng() * this.width,
+				this.rng() * this.height,
+			])
+		}
+		makeKey({ position: randPos })
 
 		entity().add("fogOfWar", {
 			width: this.width,

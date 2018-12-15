@@ -50,16 +50,16 @@ export function snake(
 			e.on("hit", id => {
 				let snake = e.snake
 				if (e.has("invincible")) return
-				e.add("invincible", 35).once("invincibleend", () => {
+				e.add("invincible", 10).once("invincibleend", () => {
 					snake.body.forEach(b => {
-						findById(b).hitbox.blocksMoving = false
+						findById(b).hitbox.blocksMoving = true
 					})
 				})
 
 				snake.body.forEach(b => {
 					let bodyPart = findById(b)
 					bodyPart.hitbox.blocksMoving = false
-					bodyPart.add("invincible", 35)
+					bodyPart.add("invincible", 10)
 				})
 
 				if (--snake.length < 2) e.destroy()

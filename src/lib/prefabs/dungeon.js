@@ -1,6 +1,6 @@
 import _uniq from "lodash/uniq"
-import { blocks } from "./blocks"
-import { make_xy2i, make_i2xy } from "./tools"
+import { blocks } from "../blocks"
+import { make_xy2i, make_i2xy } from "../tools"
 
 /**
  * Creates a dungeon and returns it as a linear Array
@@ -12,13 +12,7 @@ import { make_xy2i, make_i2xy } from "./tools"
  * @param {Function} params.rng
  * @returns {String[]}
  */
-export function createDungeon({
-	nbRoomW,
-	nbRoomH,
-	roomWidth,
-	roomHeight,
-	rng,
-}) {
+export function make({ nbRoomW, nbRoomH, roomWidth, roomHeight, rng }) {
 	let width = nbRoomW * (roomWidth - 1) + 1
 	let height = nbRoomH * (roomHeight - 1) + 1
 	let grid = Array(width * height).fill(blocks.ground)
