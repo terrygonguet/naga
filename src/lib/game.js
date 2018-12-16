@@ -83,6 +83,17 @@ export default class Game {
 		// 	height: this.height,
 		// })
 
+		// "Instructions"
+		entity()
+			.add("position", [2, -2])
+			.add("sprite", { texture: blocks.key })
+		entity()
+			.add("position", [4, -2])
+			.add("sprite", { texture: blocks.magic.s7 })
+		entity()
+			.add("position", [6, -2])
+			.add("sprite", { texture: blocks.portal })
+
 		// make some enemies on empty spaces
 		let max = this.width + Math.round((this.rng() * this.height) / 2)
 		let i2xy = make_i2xy(this.width)
