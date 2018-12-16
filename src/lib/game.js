@@ -78,10 +78,10 @@ export default class Game {
 
 		makePortal({ position: findRandomFreePosition(this) })
 
-		// entity().add("fogOfWar", {
-		// 	width: this.width,
-		// 	height: this.height,
-		// })
+		entity().add("fogOfWar", {
+			width: this.width,
+			height: this.height,
+		})
 
 		// "Instructions"
 		entity()

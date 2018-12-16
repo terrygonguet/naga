@@ -1,5 +1,6 @@
 {
 	"speed": 0,
+	"ticker": 1,
 	"controller": 1,
 	"position": 1,
 	"perf": 1,

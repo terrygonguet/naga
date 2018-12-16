@@ -11,7 +11,9 @@ export function make({ position, speed = 4 }) {
 		.add("item")
 		.on("pickedup", () => {
 			let portal = findById(getTag("portal").id)
-			portal.add("invincible", Infinity)
+			portal.add("invincible", Infinity) // just for the blinkies
+			portal.hitbox.canBeKilled = true
+			portal.hitbox.blocksMoving = false
 		})
 		.tag("item")
 	e.tag("key", { id: e.id })
