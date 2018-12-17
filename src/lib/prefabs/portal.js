@@ -1,6 +1,7 @@
 import { entity, getTag, findById } from "geotic"
 import { vec2 } from "gl-matrix"
 import { blocks } from "../blocks"
+import { switchTo as switchToBoss } from "../levels/boss"
 
 export function make({ position }) {
 	let e = entity()
@@ -33,7 +34,12 @@ export function make({ position }) {
 					.add("speed", 4)
 					.on("tick", () => {
 						fakeBody.shift().destroy()
-						if (!fakeBody.length) ticker.destroy()
+						if (!fakeBody.length) {
+							ticker.destroy()
+							setTimeout(() => {
+								switchToBoss(getTag("game").ref)
+							}, 0)
+						}
 					})
 			}
 		})

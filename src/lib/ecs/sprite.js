@@ -18,7 +18,7 @@ export function sprite(
 	{ texture, layer = "entities", modifiers = [] } = {}
 ) {
 	let pos = e.position
-	let game = getTag("game")
+	let game = getTag("game").ref
 	let s = makeSprite(game.sheet.textures[texture])
 	s.position.set(pos[0] * s.width, pos[1] * s.height)
 	modifiers.forEach(m => modifiersAdd[m]?.(s))

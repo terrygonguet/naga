@@ -9,7 +9,7 @@ import { doorAndWalls, walls } from "../blocks.js"
  * @param {Object} params
  */
 export function background(e, { sprites } = {}) {
-	let game = getTag("game")
+	let game = getTag("game").ref
 	sprites.forEach((c, i) => {
 		let s = new Sprite(game.sheet.textures[c])
 		let pos = [i % game.width, Math.floor(i / game.width)]

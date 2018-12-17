@@ -20,14 +20,14 @@ export function switchTo(game) {
 	let dungeon = makeDungeon({
 		roomWidth: 9,
 		roomHeight: 9,
-		nbRoomW: 12,
-		nbRoomH: 12,
+		nbRoomW: 10,
+		nbRoomH: 10,
 		rng: game.rng,
 	})
 	game.width = dungeon.width
 	game.height = dungeon.height
 
-	entity().tag("game", game) // global reference
+	entity().tag("game", { ref: game }) // global reference
 	entity().add("background", { sprites: dungeon })
 
 	let { width, height } = game.layers.background

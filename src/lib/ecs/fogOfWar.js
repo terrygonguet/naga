@@ -15,7 +15,7 @@ export function fogOfWar(e, { width, height } = {}) {
 	if (findByComponent("fogOfWar").length)
 		throw new Error("Only one fog of war component should exist")
 
-	let game = getTag("game")
+	let game = getTag("game").ref
 	let grid = Array(width * height).fill(1)
 	let xy2i = make_xy2i(width)
 	let i2xy = make_i2xy(width)

@@ -1,4 +1,4 @@
-import { make as makeBossroom } from "./prefabs/bossroom"
+import { make as makeBossroom } from "../prefabs/bossroom"
 import { clear, entity } from "geotic"
 
 import { make as makeSnake } from "../prefabs/snake"
@@ -14,7 +14,7 @@ export function switchTo(game) {
 	game.width = dungeon.width
 	game.height = dungeon.height
 
-	entity().tag("game", game) // global reference
+	entity().tag("game", { ref: game }) // global reference
 	entity().add("background", { sprites: dungeon })
 
 	let { width, height } = game.layers.background
