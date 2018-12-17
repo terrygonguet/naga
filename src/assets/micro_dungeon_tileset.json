@@ -480,29 +480,9 @@
 				"h": 4
 			}
 		},
-		"darkness": {
-			"frame": {
-				"x": 0,
-				"y": 12,
-				"w": 4,
-				"h": 4
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 4,
-				"h": 4
-			},
-			"sourceSize": {
-				"w": 4,
-				"h": 4
-			}
-		},
 		"snake": {
 			"frame": {
-				"x": 4,
+				"x": 0,
 				"y": 12,
 				"w": 4,
 				"h": 4
@@ -522,6 +502,26 @@
 		},
 		"snake-head": {
 			"frame": {
+				"x": 4,
+				"y": 12,
+				"w": 4,
+				"h": 4
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 4,
+				"h": 4
+			},
+			"sourceSize": {
+				"w": 4,
+				"h": 4
+			}
+		},
+		"boss-snake": {
+			"frame": {
 				"x": 8,
 				"y": 12,
 				"w": 4,
@@ -540,7 +540,7 @@
 				"h": 4
 			}
 		},
-		"sprite28": {
+		"boss-snake-head": {
 			"frame": {
 				"x": 12,
 				"y": 12,
@@ -600,7 +600,7 @@
 				"h": 4
 			}
 		},
-		"sign": {
+		"portal": {
 			"frame": {
 				"x": 24,
 				"y": 12,
@@ -620,7 +620,7 @@
 				"h": 4
 			}
 		},
-		"sprite32": {
+		"portal-open": {
 			"frame": {
 				"x": 28,
 				"y": 12,
@@ -1040,7 +1040,7 @@
 				"h": 4
 			}
 		},
-		"coin": {
+		"core-1": {
 			"frame": {
 				"x": 16,
 				"y": 24,
@@ -1060,7 +1060,7 @@
 				"h": 4
 			}
 		},
-		"coin-side": {
+		"core-2": {
 			"frame": {
 				"x": 20,
 				"y": 24,
@@ -1080,7 +1080,7 @@
 				"h": 4
 			}
 		},
-		"portal": {
+		"core-3": {
 			"frame": {
 				"x": 24,
 				"y": 24,
@@ -1100,7 +1100,7 @@
 				"h": 4
 			}
 		},
-		"portal-open": {
+		"core-4": {
 			"frame": {
 				"x": 28,
 				"y": 24,
