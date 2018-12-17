@@ -9,14 +9,7 @@ import { vec2 } from "gl-matrix"
 import spritesImage from "../assets/micro_dungeon_tileset.png"
 import spritesData from "../assets/micro_dungeon_tileset.json"
 
-import { make as makeDungeon } from "./prefabs/dungeon"
-import { make as makeSlime } from "./prefabs/slime"
-import { make as makeAprentice } from "./prefabs/apprentice"
-import { make as makeWizard } from "./prefabs/wizard"
-import { make as makeKnight } from "./prefabs/knight"
-import { make as makeSnake } from "./prefabs/snake"
-import { make as makeKey } from "./prefabs/key"
-import { make as makePortal } from "./prefabs/portal"
+import { switchTo as switchToDungeon } from "./levels/dungeon"
 
 export default class Game {
 	seed = Date.now().toString(36)
@@ -54,79 +47,7 @@ export default class Game {
 	 * Called when the ECS and Graphics systems are set up
 	 */
 	ready() {
-		let dungeon = makeDungeon({
-			roomWidth: 9,
-			roomHeight: 9,
-			nbRoomW: 12,
-			nbRoomH: 12,
-			rng: this.rng,
-		})
-		this.width = dungeon.width
-		this.height = dungeon.height
-
-		entity().tag("game", this) // global reference
-		entity().add("background", { sprites: dungeon })
-
-		let { width, height } = this.layers.background
-		this.stage.position.set(
-			innerWidth / 2 - width / 2,
-			innerHeight / 2 - height / 2
-		)
-
-		makeSnake()
-		makeKey({ position: findRandomFreePosition(this) })
-
-		makePortal({ position: findRandomFreePosition(this) })
-
-		entity().add("fogOfWar", {
-			width: this.width,
-			height: this.height,
-		})
-
-		// "Instructions"
-		entity()
-			.add("position", [2, -2])
-			.add("sprite", { texture: blocks.key })
-		entity()
-			.add("position", [4, -2])
-			.add("sprite", { texture: blocks.magic.s7 })
-		entity()
-			.add("position", [6, -2])
-			.add("sprite", { texture: blocks.portal })
-
-		// make some enemies on empty spaces
-		let max = this.width + Math.round((this.rng() * this.height) / 2)
-		let i2xy = make_i2xy(this.width)
-		for (let i = 0; i < max; i++) {
-			let position = findRandomFreePosition(this)
-
-			let r = this.rng()
-			if (r < 0.1)
-				makeWizard({
-					position,
-					flipAnim: this.rng() < 0.5,
-					flipV: this.rng() < 0.5,
-				})
-			else if (r < 0.2)
-				makeAprentice({
-					position,
-					flipAnim: this.rng() < 0.5,
-					flipV: this.rng() < 0.5,
-				})
-			else if (r < 0.3)
-				makeKnight({
-					position,
-					flipAnim: this.rng() < 0.5,
-					flipV: this.rng() < 0.5,
-				})
-			else
-				makeSlime({
-					position,
-					isRed: this.rng() < 0.5,
-					flipAnim: this.rng() < 0.5,
-					flipV: this.rng() < 0.5,
-				})
-		}
+		switchToDungeon(this)
 
 		if (process.env.NODE_ENV === "development") {
 			entity().add("perf")
