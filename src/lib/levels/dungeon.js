@@ -20,8 +20,8 @@ export function switchTo(game) {
 	let dungeon = makeDungeon({
 		roomWidth: 9,
 		roomHeight: 9,
-		nbRoomW: 10,
-		nbRoomH: 10,
+		nbRoomW: 7,
+		nbRoomH: 7,
 		rng: game.rng,
 	})
 	game.width = dungeon.width

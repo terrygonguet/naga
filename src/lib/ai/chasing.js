@@ -1,5 +1,5 @@
 import { canSee, isPositionBlocked } from "../tools"
-import { findByComponent, findById } from "geotic"
+import { findByComponent, findById, getTag } from "geotic"
 import { vec2 } from "gl-matrix"
 
 /**
@@ -35,8 +35,7 @@ export function update({ entity, closestSnake, game, machine }) {
 		else moveTo[1] += Math.sign(dy)
 
 		// if it's not the head and we can reach snake we attack
-		let isHead =
-			findById(closestSnake.tags.snake.id).snake.head === closestSnake.id
+		let isHead = findById(getTag("player").id).snake.head === closestSnake.id
 		if (!isHead && vec2.equals(moveTo, closestSnake.position)) {
 			closestSnake.emit("hit", entity.id)
 		} else {

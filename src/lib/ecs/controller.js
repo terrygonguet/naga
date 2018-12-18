@@ -1,5 +1,6 @@
 import { directions } from "../directions"
 import _order from "./order.json"
+import { findByComponent } from "geotic"
 
 /**
  * Keeps track of the last direction the player pushed
@@ -20,7 +21,13 @@ export function controller(e) {
 	}
 }
 
-export function update(game) {}
+export function update(game) {
+	findByComponent("controller").forEach(e => {
+		let { controller, snake } = e
+		if (!snake) return
+		snake.direction = controller.direction
+	})
+}
 
 export { controller as component }
 export const name = "controller"

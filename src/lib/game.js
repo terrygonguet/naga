@@ -10,6 +10,7 @@ import spritesImage from "../assets/micro_dungeon_tileset.png"
 import spritesData from "../assets/micro_dungeon_tileset.json"
 
 import { switchTo as switchToDungeon } from "./levels/dungeon"
+import { switchTo as switchToBoss } from "./levels/boss"
 
 export default class Game {
 	seed = Date.now().toString(36)
@@ -47,7 +48,8 @@ export default class Game {
 	 * Called when the ECS and Graphics systems are set up
 	 */
 	ready() {
-		switchToDungeon(this)
+		// switchToDungeon(this)
+		switchToBoss(this)
 
 		if (process.env.NODE_ENV === "development") {
 			entity().add("perf")

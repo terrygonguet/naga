@@ -32,17 +32,28 @@ import { vec2 } from "gl-matrix"
  */
 export function snake(
 	e,
-	{ length = 4, position = vec2.fromValues(4, 4) } = {}
+	{
+		length = 4,
+		position = vec2.fromValues(4, 4),
+		direction = directions.right,
+		isPlayer = true,
+	} = {}
 ) {
 	return {
 		length,
 		head: null,
 		body: [],
 		lastDirection: null,
+		direction: null,
+		isPlayer,
+		textures: {
+			head: isPlayer ? blocks.snakeHead : blocks.bossHead,
+			tail: isPlayer ? blocks.snake : blocks.boss,
+		},
 		mount() {
 			let head = make_head({
 				position,
-				direction: "right",
+				direction,
 				snakeId: e.id,
 			})
 			e.snake.head = head.id
@@ -66,68 +77,69 @@ export function snake(
 			})
 		},
 		unmount() {
-			e.snake.body.forEach(ent => findById(ent).destroy())
+			e.snake.body.forEach(ent => findById(ent)?.destroy())
 		},
 	}
 }
 
 export function update(game) {
-	let snakeEntity = findByCanTick("snake")[0]
-	let { snake, controller } = snakeEntity || {}
-	if (!controller?.direction && !snake?.lastDirection) return
+	findByCanTick("snake").forEach(snakeEntity => {
+		let snake = snakeEntity.snake
+		if (!snake.direction && !snake.lastDirection) return
 
-	let direction = getDirection({ snake, controller })
-	let canMove = getPossibleDirections(snake)
+		let direction = getDirection(snake)
+		let canMove = getPossibleDirections(snake)
 
-	// find the first direction we can go in
-	direction = [
-		direction,
-		turnRight(direction),
-		turnLeft(direction),
-		reverse(direction),
-	].find(dir => canMove[dir])
-	// ye done goof'd
-	if (!direction) {
-		snakeEntity.emit("hit", snakeEntity.id)
-		// recalculate direction after the body has become passable
-		direction = getDirection({ snake, controller })
-		canMove = getPossibleDirections(snake)
+		// find the first direction we can go in
 		direction = [
 			direction,
 			turnRight(direction),
 			turnLeft(direction),
 			reverse(direction),
 		].find(dir => canMove[dir])
-		// Now we're really stuck
-		if (!direction) return snakeEntity.destroy()
-	}
+		// ye done goof'd
+		if (!direction) {
+			snakeEntity.emit("hit", snakeEntity.id)
+			// recalculate direction after the body has become passable
+			direction = getDirection(snake)
+			canMove = getPossibleDirections(snake)
+			direction = [
+				direction,
+				turnRight(direction),
+				turnLeft(direction),
+				reverse(direction),
+			].find(dir => canMove[dir])
+			// Now we're really stuck
+			if (!direction) return snakeEntity.destroy()
+		}
 
-	let nextPos = getNextPos({ snake, direction })
-	let entities = findByPosition(nextPos)
-		.filter(haveHitbox({ canBeKilled: true }))
-		.forEach(e => {
-			e?.hitbox?.givesLength && snake.length++
-			e.emit("hit", snakeEntity.id)
+		let nextPos = getNextPos({ snake, direction })
+		let entities = findByPosition(nextPos)
+			.filter(haveHitbox({ canBeKilled: true }))
+			.forEach(e => {
+				e?.hitbox?.givesLength && snake.length++
+				e.emit("hit", snakeEntity.id)
+			})
+
+		snake.lastDirection = direction
+		// direction.direction = direction
+
+		let oldHead = findById(snake.head)
+		// when the block becomes body it becomes snake
+		oldHead.sprite.texture = snake.textures.tail
+
+		let head = make_head({
+			position: nextPos,
+			direction,
+			snakeId: snakeEntity.id,
 		})
-
-	snake.lastDirection = direction
-	controller.direction = direction
-
-	let oldHead = findById(snake.head)
-	// when the block becomes body it becomes snake
-	oldHead.sprite.texture = blocks.snake
-
-	let head = make_head({
-		position: nextPos,
-		direction,
-		snakeId: snakeEntity.id,
+		snake.head = head.id
+		snake.body.push(head.id)
+		// we can remove more than on segment per tick if we get hit
+		while (snake.body.length > snake.length) {
+			findById(snake.body.shift()).destroy()
+		}
 	})
-	snake.head = head.id
-	snake.body.push(head.id)
-	// we can remove more than on segment per tick if we get hit
-	while (snake.body.length > snake.length) {
-		findById(snake.body.shift()).destroy()
-	}
 }
 
 /**
@@ -141,12 +153,13 @@ export function update(game) {
  */
 function make_head({ position, direction, snakeId }) {
 	let snakeEnt = findById(snakeId)
+	let snake = snakeEnt.snake
 	let e = entity()
 		.add("position", position)
 		.add("fov")
 		.add("hitbox", { blocksMoving: true })
 		.add("sprite", {
-			texture: blocks.snakeHead,
+			texture: snake.textures.head,
 			layer: "entities",
 			modifiers: [_findKey(directions, d => d === direction) || "right"],
 		})
@@ -154,9 +167,10 @@ function make_head({ position, direction, snakeId }) {
 			snakeEnt.emit("hit", id)
 		})
 		.tag("snake", { id: snakeId })
+	if (snake.isPlayer) e.tag("player", { id: snakeId })
 
 	if (snakeEnt.has("invincible")) {
-		e.hitbox.blocksMoving = false
+		snake.isPlayer && (e.hitbox.blocksMoving = false)
 		e.add("invincible", snakeEnt.invincible.remaining)
 	}
 	return e
@@ -169,7 +183,7 @@ function make_head({ position, direction, snakeId }) {
  * @param {Object} params.snake The snake component
  * @param {String} params.direction
  * @param {vec2|Number[]} [params.out]
- * @returns {Object} { x, y }
+ * @returns {vec2}
  */
 function getNextPos({ snake, direction, out = vec2.create() }) {
 	return vec2.add(out, findById(snake.head).position, vectors[direction])
@@ -180,11 +194,10 @@ function getNextPos({ snake, direction, out = vec2.create() }) {
  * snake.lastDirection else
  * @param {Object} params
  * @param {Object} params.snake snake component
- * @param {Object} params.controller controller component
  * @returns {String}
  */
-function getDirection({ snake, controller }) {
-	let direction = controller.direction
+function getDirection(snake) {
+	let direction = snake.direction
 	if (direction === reverse(snake.lastDirection))
 		direction = snake.lastDirection
 	return direction
@@ -194,7 +207,7 @@ function getDirection({ snake, controller }) {
  * Returns an object with the directions as keys
  * and a bool value if the snake can move there
  * @param {Object} snake snake component
- * @returns {Object} { <direction.p>: Boolean, ...}
+ * @returns {Object} { [String]: Boolean }
  */
 function getPossibleDirections(snake) {
 	let opposite = reverse(snake.lastDirection)

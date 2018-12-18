@@ -16,13 +16,13 @@ export function update({ entity, closestSnake, game, machine }) {
 		state,
 		target,
 	} = entity.ai
-	if (!closestSnake) return entity.ai.state
 	let pos = entity.position
 
 	if (game.rng() < chanceToMove) randomMove(entity, game.rng)
 
 	// if the player is in range we check line of sight
 	if (
+		closestSnake &&
 		vec2.distance(pos, closestSnake.position) <= sightRange &&
 		canSee(pos, closestSnake.position)
 	) {
