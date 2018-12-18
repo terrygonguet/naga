@@ -15,6 +15,7 @@ export function update({ entity, closestSnake, game, machine }) {
 		data: { tooCloseRange },
 		state,
 	} = entity.ai
+	if (!closestSnake) return entity.ai.state
 	let pos = entity.position
 
 	entity.animation.flipV = closestSnake.position[0] - pos[0] > 0

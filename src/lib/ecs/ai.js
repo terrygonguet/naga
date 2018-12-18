@@ -32,14 +32,15 @@ export function ai(e, { data, machine } = {}) {
 
 export function update(game) {
 	findByCanTick("ai").forEach(ent => {
-		if (!ent.position) return
-
 		let { state, machine } = ent.ai
 		let pos = ent.position
-		let closestSnake = findByTag("snake").sort(
-			(a, b) => vec2.distance(pos, a.position) - vec2.distance(pos, b.position)
-		)[0]
-		if (!closestSnake) return // whatever
+		let closestSnake
+		if (pos) {
+			closestSnake = findByTag("player").sort(
+				(a, b) =>
+					vec2.distance(pos, a.position) - vec2.distance(pos, b.position)
+			)[0]
+		}
 		let aimachine = Machine(machine)
 
 		// we call the update function for the current state and they return the next state

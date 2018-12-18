@@ -16,6 +16,7 @@ export function update({ entity, closestSnake, game, machine }) {
 		state,
 		target,
 	} = entity.ai
+	if (!closestSnake) return entity.ai.state
 
 	let pos = entity.position
 	// TODO : pathfinding
