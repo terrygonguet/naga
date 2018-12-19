@@ -40,7 +40,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 				},
 			},
 		})
-		.on("hit", () => e.destroy())
+		.on("hit", () => setTimeout(() => e.destroy(), 0))
 		.tag("enemy")
 	return e
 }

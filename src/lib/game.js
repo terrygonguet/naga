@@ -48,8 +48,7 @@ export default class Game {
 	 * Called when the ECS and Graphics systems are set up
 	 */
 	ready() {
-		// switchToDungeon(this)
-		switchToBoss(this)
+		switchToDungeon(this)
 
 		if (process.env.NODE_ENV === "development") {
 			entity().add("perf")

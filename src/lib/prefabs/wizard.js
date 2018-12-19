@@ -90,7 +90,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 
 			vec2.copy(e.position, [1000000, 1000000]) // TODO: hide better
 			e.hitbox.givesLength = true
-			e.on("hit", () => e.destroy())
+			e.on("hit", () => setTimeout(() => e.destroy(), 0))
 		})
 		.tag("enemy")
 	return e

@@ -40,9 +40,9 @@ export function update({ entity, closestSnake, game, machine }) {
 			causesDamage: true,
 			pierces: false,
 		})
-		p.add("ticker").on("tick", () => {
+		p.on("move", () => {
 			if (game.rng() < 0.06) {
-				spawn(game, p.position, chanceToSpawnShadow)
+				spawn(game, p.position, chanceToSpawnShadow, entity)
 				setTimeout(() => findById(p.id)?.destroy(), 0)
 			}
 		})
@@ -50,7 +50,7 @@ export function update({ entity, closestSnake, game, machine }) {
 	return entity.ai.state
 }
 
-function spawn(game, position, chanceToSpawnShadow) {
+function spawn(game, position, chanceToSpawnShadow, boss) {
 	// if there's anything other than the projectile here we return
 	if (findByPosition(position).length > 1) return
 	let r = game.rng()
@@ -84,5 +84,28 @@ function spawn(game, position, chanceToSpawnShadow) {
 	if (game.rng() < chanceToSpawnShadow) {
 		e.hitbox.givesLength = false
 		e.sprite.texture.alpha = 0.5
+	} else {
+		e.on("hit", () => {
+			let direction = vec2.sub(
+				vec2.create(),
+				findById(boss.snake.head).position,
+				e.position
+			)
+			let p = makeProjectile({
+				position: e.position,
+				direction,
+				speed: 10,
+				frames: animations.magic,
+				causesDamage: true,
+				pierces: true,
+			})
+			p.on("collide", target => {
+				if (target?.snake?.isPlayer) {
+					target.snake.length++ // cause it just got hit
+					target.remove("invincible")
+					target.emit("invincibleend")
+				} else boss.snake.length--
+			})
+		})
 	}
 }

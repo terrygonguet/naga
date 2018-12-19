@@ -37,7 +37,7 @@ export function make({
 				},
 			},
 		})
-		.on("hit", () => e.destroy())
+		.on("hit", () => setTimeout(() => e.destroy(), 0))
 		.tag("enemy")
 	return e
 }

@@ -50,7 +50,7 @@ export function make({ position, flipAnim = false, flipV = false }) {
 				e.hitbox.blocksMoving = false
 				e.hitbox.givesLength = true
 				e.ai.state = machine.transition(e.ai.state, "RECOVER").value
-				e.on("hit", () => e.destroy())
+				e.on("hit", () => setTimeout(() => e.destroy(), 0))
 			})
 			e.sprite.texture = blocks.enemy.male
 			e.animation.frames = animations.male

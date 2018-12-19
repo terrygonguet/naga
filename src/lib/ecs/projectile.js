@@ -7,6 +7,7 @@ import { vec2 } from "gl-matrix"
  * Events emitted :
  * "outofbouds"
  * "collide" passes the entity it collided with
+ * "move"
  */
 
 /**
